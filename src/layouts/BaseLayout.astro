@@ -24,11 +24,21 @@ const fullTitle = title ? `${title} — ${siteConfig.siteName}` : siteConfig.sit
       <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
         <a href="/" class="font-semibold text-lg">{siteConfig.siteName}</a>
         <nav>
-          <ul class="flex gap-6 text-sm">
+          <ul class="flex items-center gap-6 text-sm">
             <li><a href="/">Home</a></li>
             <li><a href="/events">Events</a></li>
             <li><a href="/about">About</a></li>
             <li><a href="/contact">Contact</a></li>
+            <li>
+              <a
+                href={siteConfig.googleFormUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-block bg-black text-white px-4 py-2 rounded-md font-medium hover:bg-gray-800 transition"
+              >
+                Become a member
+              </a>
+            </li>
           </ul>
         </nav>
       </div>
