@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import InstagramGrid from '../../components/InstagramGrid.astro';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const events = await getCollection('events');
+  return events.map(event => ({
+    params: { slug: event.id },
+    props: { event },
+  }));
+}
+
+interface Props {
+  event: CollectionEntry<'events'>;
+}
+const { event } = Astro.props;
+const { Content } = await render(event);
+
+const dateStr = event.data.date.toLocaleDateString('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+---
+<BaseLayout title={event.data.title}>
+  <article class="max-w-3xl mx-auto px-4 py-8">
+    <p class="text-sm text-gray-600">{dateStr}</p>
+    <h1 class="text-3xl font-bold mt-1 mb-6">{event.data.title}</h1>
+
+    <a
+      href={event.data.lumaUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="inline-block bg-black text-white px-5 py-2.5 rounded-md font-medium hover:bg-gray-800 transition mb-8"
+    >
+      Register on Luma →
+    </a>
+
+    <div class="prose max-w-none">
+      <Content />
+    </div>
+  </article>
+
+  <InstagramGrid posts={event.data.instagramPosts} />
+</BaseLayout>
