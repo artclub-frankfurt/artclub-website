@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getEntry, render } from 'astro:content';
+
+const about = await getEntry('site', 'about');
+if (!about) throw new Error('src/content/site/about.md is missing');
+const { Content } = await render(about);
+---
+<BaseLayout title="About">
+  <article class="max-w-3xl mx-auto px-4 py-8 prose">
+    <Content />
+  </article>
+</BaseLayout>
