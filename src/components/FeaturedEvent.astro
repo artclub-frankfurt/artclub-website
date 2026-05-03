@@ -1,0 +1,95 @@
+---
+import { getCollection } from 'astro:content';
+import { partitionEvents } from '../lib/events';
+
+const all = await getCollection('events');
+const withSlug = all.map(e => ({ ...e, slug: e.id }));
+const { upcoming } = partitionEvents(withSlug);
+const next = upcoming[0];
+
+function formatEventDate(d: Date): string {
+  const month = d.toLocaleDateString('en-US', { month: 'long' }).toUpperCase();
+  return `${month} ${d.getDate()} · ${d.getFullYear()}`;
+}
+---
+<section class="featured-event">
+  <div class="featured-event__inner">
+    <p class="eyebrow featured-event__eyebrow">Upcoming</p>
+    {next ? (
+      <>
+        <h2 class="featured-event__title">{next.data.title}</h2>
+        <p class="featured-event__meta">{formatEventDate(next.data.date)}</p>
+        <div class="featured-event__ctas">
+          <a
+            href={next.data.lumaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-primary"
+          >
+            Register on Luma
+          </a>
+          <a href="/events" class="link-chrome">See all events →</a>
+        </div>
+      </>
+    ) : (
+      <p class="featured-event__empty">No upcoming events right now — check back soon.</p>
+    )}
+  </div>
+</section>
+
+<style>
+  .featured-event {
+    background: var(--color-canvas);
+    padding: 5rem 1.5rem 5.5rem;
+  }
+
+  .featured-event__inner {
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .featured-event__eyebrow {
+    margin: 0 0 1rem;
+  }
+
+  .featured-event__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-h1);
+    font-weight: 400;
+    line-height: 1.15;
+    margin: 0 0 0.65rem;
+    color: var(--color-ink);
+  }
+
+  .featured-event__meta {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 0.9375rem;
+    color: var(--color-ink-2);
+    margin: 0 0 2rem;
+    letter-spacing: 0.01em;
+  }
+
+  .featured-event__ctas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .featured-event__empty {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--color-ink-2);
+    margin: 0;
+  }
+
+  @media (min-width: 640px) {
+    .featured-event__ctas {
+      flex-direction: row;
+      justify-content: center;
+      gap: 2.25rem;
+    }
+  }
+</style>

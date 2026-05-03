@@ -1,0 +1,53 @@
+---
+interface Props {
+  posts: string[];
+}
+const { posts } = Astro.props;
+---
+{posts.length === 0 ? (
+  <p class="ig-empty">
+    Curated Instagram posts not configured yet — set <code>instagram.curatedPosts</code> in <code>src/data/site.json</code>.
+  </p>
+) : (
+  <>
+    <div class="ig-curated">
+      {posts.map(url => (
+        <blockquote
+          class="instagram-media ig-curated__item"
+          data-instgrm-permalink={url}
+          data-instgrm-version="14"
+        >
+          <a href={url}>View on Instagram</a>
+        </blockquote>
+      ))}
+    </div>
+    <script async src="https://www.instagram.com/embed.js"></script>
+  </>
+)}
+
+<style>
+  .ig-curated {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  @media (min-width: 768px) {
+    .ig-curated {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .ig-curated__item {
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .ig-empty {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--color-ink-3);
+    text-align: center;
+    margin: 0;
+  }
+</style>

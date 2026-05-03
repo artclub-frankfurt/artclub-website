@@ -30,7 +30,7 @@ This site follows a strict-by-default dependency posture:
 
 - **Exact pinning.** No `^` or `~` in `package.json`. `.npmrc` enforces `save-exact=true` so `pnpm add` always writes pinned versions.
 - **Locked transitive deps.** `pnpm-lock.yaml` is committed.
-- **Minimal direct deps.** Total: `astro`, `@tailwindcss/vite`, `tailwindcss` (runtime); `vitest` (dev only). Nothing exotic.
+- **Minimal direct deps.** Total: `astro`, `@tailwindcss/vite`, `tailwindcss`, `sharp` (runtime); `vitest` (dev only). Nothing exotic. `sharp` is listed explicitly because Astro uses it at build time to optimize images in `src/assets/` (responsive `srcset`, AVIF/WebP), and modern pnpm (≥10) requires explicit opt-in for any package's install scripts via `pnpm.onlyBuiltDependencies` in `package.json`.
 - **No runtime third-party JS via npm.** External JS comes from two `<script>` tags loaded by URL: behold.so on the home page, Instagram `embed.js` on event detail pages with photos. Both render gracefully if the script fails (carousel hidden / "View on Instagram" link fallback).
 - **Upgrades are explicit.** To bump a dep, run `pnpm update <name> --latest`, review the changelog, run `pnpm test && pnpm build`, then commit with the version change in the message.
 - **Repository is public.** Intentional: nothing sensitive in the code (placeholder content + behold widget ID, the latter visible in deployed HTML anyway); unlocks free unlimited GitHub Actions minutes; fits the open-by-default ethos of a student association. All real credentials (Vercel token, etc.) live in GitHub Actions secrets — never in the repo. Git history was scanned for accidentally-committed secrets before going public.
@@ -286,7 +286,9 @@ All content is edited on github.com. You don't need to install anything.
 - `tagline` — short phrase used near the hero (optional in design).
 - `contactEmail` — primary email; appears in footer and contact page.
 - `googleFormUrl` — full URL of the Google Form for membership signup.
-- `beholdWidgetId` — the widget ID from your behold.so dashboard. While set to `"REPLACE_ME"`, the home page shows a placeholder instead of the carousel.
+- `instagram.source` — either `"behold"` (auto-pulled live feed via behold.so) or `"curated"` (a hand-picked list of post URLs). Build will fail with a clear error if the matching field below is empty.
+- `instagram.beholdWidgetId` — the widget ID from your behold.so dashboard. Required when `source` is `"behold"`. While set to `"REPLACE_ME"` the home-page section shows a placeholder instead of the carousel.
+- `instagram.curatedPosts` — list of full Instagram post URLs (e.g. `"https://www.instagram.com/p/ABCDE/"`). Required when `source` is `"curated"`. Show 4 for a clean grid.
 - `socialLinks.instagram` — full URL to the association's Instagram profile.
 - `socialLinks.email` — same as `contactEmail` (kept separate so social blocks can reference it as a "social link").
 
@@ -294,7 +296,7 @@ All content is edited on github.com. You don't need to install anything.
 
 | Service | What it does | Where it's configured | How to swap |
 |---|---|---|---|
-| **behold.so** | Instagram carousel on the home page | `beholdWidgetId` in `src/data/site.json`; widget script in `src/components/InstagramCarousel.astro` | Replace the script + data attribute with snapwidget.com (or similar) markup. One file. |
+| **behold.so** | Instagram carousel on the home page (when `instagram.source` is `"behold"`) | `instagram.beholdWidgetId` in `src/data/site.json`; widget script in `src/components/InstagramSectionBehold.astro` | Either swap to `instagram.source: "curated"` and supply post URLs, or replace the `<div>` + `<script>` in `InstagramSectionBehold.astro` with another widget vendor's snippet. |
 | **Instagram embeds** | Per-event photo grids | `instagramPosts:` array in each event's frontmatter | N/A — Instagram-native |
 | **Luma** | Event registration | `lumaUrl` in each event's frontmatter | N/A — just swap the URL |
 | **Google Form** | Membership signup | `googleFormUrl` in `src/data/site.json` | Swap the URL |
@@ -306,7 +308,8 @@ All content is edited on github.com. You don't need to install anything.
 ## 8. Common maintenance tasks
 
 - **Change contact email:** edit `contactEmail` and `socialLinks.email` in `src/data/site.json`.
-- **Swap the Instagram widget service:** edit `src/components/InstagramCarousel.astro`. Replace the `<div>` + `<script>` with the new service's snippet. Update `site.json` if the widget ID format changes.
+- **Swap the Instagram widget service:** edit `src/components/InstagramSectionBehold.astro`. Replace the `<div>` + `<script>` with the new service's snippet. Update `site.json` if the widget ID format changes.
+- **Switch the home-page Instagram from auto-pulled to hand-picked:** in `src/data/site.json`, change `instagram.source` from `"behold"` to `"curated"` and populate `instagram.curatedPosts` with 4 Instagram post URLs.
 - **Add a new top-level page (e.g. `/sponsors`):**
   1. Create `src/content/site/sponsors.md` with frontmatter + body.
   2. Create `src/pages/sponsors.astro` mirroring `about.astro`.
@@ -324,7 +327,7 @@ All content is edited on github.com. You don't need to install anything.
 - **Custom domain stuck on "Invalid Configuration":** verify in the Strato DNS panel that the apex `A` record and `CNAME www → cname.vercel-dns.com` are present and that no conflicting `A`/`AAAA` records remain on `@` or `www`. DNS changes can take up to 30 min to propagate.
 - **Email at `info@artclub-frankfurt.de` not arriving after deploy:** verify Zoho's MX records are still in Strato's DNS panel (typically `mx.zoho.eu`/`mx2.zoho.eu`/`mx3.zoho.eu`, or `mx.zoho.com` for US accounts). The Vercel setup should not have touched these — only added two new records.
 - **Instagram embeds show only "View on Instagram" links:** Instagram's `embed.js` failed to load (rate-limited, blocked, or post is private). Refresh; if persistent, the post may be from a private account.
-- **behold widget shows nothing:** check `beholdWidgetId` in `site.json` matches the ID in the behold dashboard, and that the connected Instagram account has at least one public post.
+- **behold widget shows nothing:** check `instagram.beholdWidgetId` in `site.json` matches the ID in the behold dashboard, and that the connected Instagram account has at least one public post.
 - **Frontmatter validation error in build log:** check that the event's frontmatter matches the schema in `src/content.config.ts` — `date` must be a valid date, `lumaUrl` must be a valid URL.
 
 ## 10. Specs and plans

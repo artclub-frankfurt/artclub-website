@@ -16,6 +16,8 @@ const site = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/site' }),
   schema: z.object({
     title: z.string().optional(),
+    heroTitle: z.string().optional(),
+    heroSubtitle: z.string().optional(),
   }),
 });
 

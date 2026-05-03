@@ -1,6 +1,5 @@
 ---
-title: "Welcome to Art Club Frankfurt"
+title: "Home"
+heroTitle: "Connecting people through art."
+heroSubtitle: "Student initiative at Goethe University, Frankfurt."
 ---
-
-We are a student association dedicated to [your mission here].
-Edit this paragraph in `src/content/site/home.md`.

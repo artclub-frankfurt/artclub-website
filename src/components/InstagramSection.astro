@@ -1,0 +1,67 @@
+---
+import { siteConfig } from '../lib/siteConfig';
+import InstagramSectionBehold from './InstagramSectionBehold.astro';
+import InstagramSectionCurated from './InstagramSectionCurated.astro';
+
+const ig = siteConfig.instagram;
+const profileUrl = siteConfig.socialLinks.instagram;
+
+const handleMatch = profileUrl.match(/instagram\.com\/([^\/?#]+)/);
+const handle = handleMatch ? `@${handleMatch[1]}` : '@artclub_frankfurt';
+---
+<section class="ig-section">
+  <div class="ig-section__inner">
+    <header class="ig-section__header">
+      <h2 class="ig-section__heading">Latest from Instagram</h2>
+      <a
+        href={profileUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="link-chrome ig-section__link"
+      >
+        {handle} →
+      </a>
+    </header>
+    <div class="ig-section__body">
+      {ig.source === 'behold' ? (
+        <InstagramSectionBehold widgetId={ig.beholdWidgetId} />
+      ) : (
+        <InstagramSectionCurated posts={ig.curatedPosts} />
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .ig-section {
+    background: var(--color-canvas);
+    padding: 4rem 1.5rem 5rem;
+  }
+
+  .ig-section__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .ig-section__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 1.75rem;
+    flex-wrap: wrap;
+  }
+
+  .ig-section__heading {
+    font-family: var(--font-serif);
+    font-size: 1.125rem;
+    font-weight: 400;
+    color: var(--color-ink);
+    margin: 0;
+    letter-spacing: 0.005em;
+  }
+
+  .ig-section__link {
+    font-size: 0.625rem;
+  }
+</style>

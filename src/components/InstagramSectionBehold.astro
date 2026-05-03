@@ -1,0 +1,33 @@
+---
+interface Props {
+  widgetId: string;
+}
+const { widgetId } = Astro.props;
+const isPlaceholder = !widgetId || widgetId === 'REPLACE_ME';
+---
+{isPlaceholder ? (
+  <p class="ig-empty">Instagram widget not configured yet.</p>
+) : (
+  <>
+    <div class="ig-behold" data-behold-id={widgetId}></div>
+    <script type="module" src="https://w.behold.so/widget.js"></script>
+  </>
+)}
+
+<style>
+  .ig-behold {
+    /* The behold widget injects its own grid via the dashboard's chosen template
+     * (set this to the uniform "Grid" template — not the bouncy default).
+     * If behold's CSS doesn't honour the brand's sharp-corner / tight-gap rules
+     * a small override layer can be added at src/styles/behold.css and imported
+     * here; intentionally absent until needed. */
+  }
+
+  .ig-empty {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--color-ink-3);
+    text-align: center;
+    margin: 0;
+  }
+</style>

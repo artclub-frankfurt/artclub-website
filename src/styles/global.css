@@ -39,21 +39,28 @@
   --tracking-eyebrow:  0.18em;
 }
 
-/* ---------- Base ---------- */
-html {
-  font-family: var(--font-serif);
-  color: var(--color-ink);
-  background: var(--color-canvas);
-}
+/* ---------- Base ----------
+ * Wrapped in @layer base so the @layer components rules below
+ * (e.g. .btn-primary's color: #fff) win the cascade. Unlayered rules
+ * sit in the anonymous layer at the end and would otherwise override
+ * components layer regardless of selector specificity.
+ */
+@layer base {
+  html {
+    font-family: var(--font-serif);
+    color: var(--color-ink);
+    background: var(--color-canvas);
+  }
 
-body {
-  font-family: var(--font-serif);
-  background: var(--color-canvas);
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
+  body {
+    font-family: var(--font-serif);
+    background: var(--color-canvas);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
 
-a { color: inherit; text-decoration: none; }
+  a { color: inherit; text-decoration: none; }
+}
 
 /* ---------- Component primitives ----------
  * Three button variants only. Plus the eyebrow label, the chrome link, the
@@ -71,7 +78,7 @@ a { color: inherit; text-decoration: none; }
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: var(--tracking-button);
-    padding: 0.95rem 1.7rem;
+    padding: 0.75rem 1.6rem;
     border: 1px solid var(--color-burgundy);
     transition: background-color 150ms ease, border-color 150ms ease;
   }
@@ -91,7 +98,7 @@ a { color: inherit; text-decoration: none; }
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: var(--tracking-button);
-    padding: 0.95rem 1.7rem;
+    padding: 0.75rem 1.6rem;
     border: 1px solid var(--color-burgundy);
     transition: background-color 150ms ease, color 150ms ease;
   }

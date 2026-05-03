@@ -10,10 +10,11 @@ Prioritized follow-ups for the Art Club Frankfurt website. Pick from the top dow
 
 ## Later
 
-### 🔴 Visual design pass
-- Invoke the `frontend-design` skill (mentioned in spec §3)
-- Brand identity, typography, color, hero treatment, spacing
-- All structural code is already in place — this is presentation-only
+### 🟠 Visual design pass — in progress
+- Brief: `docs/superpowers/specs/2026-05-03-design-brief.md`
+- Milestone 1 (design tokens + BaseLayout chrome) — ✅ shipped via PR #5
+- Milestone 2 (home page: manifesto hero + featured event + modular Instagram dispatcher) — in flight
+- Remaining: events index, event detail, about + contact, polish + responsive refinement
 
 ### 🟠 Real event content
 - Replace `2026-06-15-spring-gala.md` and `2026-03-10-welcome-night.md` in `src/content/events/` with actual events
@@ -24,10 +25,24 @@ Prioritized follow-ups for the Art Club Frankfurt website. Pick from the top dow
 - `src/content/site/about.md` — mission, team, what the club does
 - `src/content/site/contact.md` — location, additional contact channels
 
-### 🟢 SEO + Open Graph
-- Add `description` to each page via `BaseLayout` props
-- Generate per-page Open Graph images (better preview cards in WhatsApp/IG DMs)
-- Tools: `@astrojs/sitemap` (sitemap.xml), build-time OG image generation
+### 🟢 JSON-LD `Event` structured data on event detail pages
+- Inline `<script type="application/ld+json">` per `/events/<slug>`
+- Schema.org/Event with `name`, `startDate`, `location`, `url` (Luma), `image`
+- Lets Google show event rich results (date pill, "near you" cards, Google Calendar quick-add)
+- ~20 lines per page; pure addition, no UI change
+
+### 🟢 Sitemap + RSS
+- `@astrojs/sitemap` — auto-generates `/sitemap-index.xml` at build time, zero runtime
+- `@astrojs/rss` — exposes `/events.xml` so enthusiasts can subscribe to upcoming events in their feed reader
+- Both first-party Astro integrations, exact-pinned, build-time only — fits the strict-deps posture
+
+### 🟢 Per-page Open Graph images
+- Default OG image is `public/images/logo-banner.jpg` (set in BaseLayout). Good enough for the home page and the static pages.
+- Per-event OG could be the event's `coverImage` if one is added to the schema, or a build-time generated card with the event title in TNR on burgundy. Defer until events have cover images.
+
+### 🟢 Higher-resolution hero photo
+- Current `src/assets/hero-campus.jpg` is 1240×827 px. Astro now optimizes it (srcset + AVIF/WebP) but cannot upscale, so the hero is soft on retina laptops/desktops.
+- Source the original (anything ≥2400 px wide, JPG, same composition) and replace the file in `src/assets/`.
 
 ### 🟢 Analytics (optional, later)
 - Vercel Web Analytics is privacy-friendly + free tier + one-line addition (`@vercel/analytics` in the BaseLayout). Or Plausible / Cloudflare Web Analytics as alternatives.
