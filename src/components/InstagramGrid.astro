@@ -5,15 +5,15 @@ interface Props {
 const { posts } = Astro.props;
 ---
 {posts.length > 0 && (
-  <section class="max-w-5xl mx-auto px-4 py-8">
-    <h2 class="text-2xl font-bold mb-4">Photos</h2>
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <section class="ig-grid-section">
+    <div class="hairline ig-grid-section__divider"></div>
+    <h2 class="ig-grid-section__heading">Photos</h2>
+    <div class="ig-grid">
       {posts.map(url => (
         <blockquote
-          class="instagram-media"
+          class="instagram-media ig-grid__item"
           data-instgrm-permalink={url}
           data-instgrm-version="14"
-          style="background:#FFF; border:0; margin: 0; max-width:540px; min-width:240px; padding:0; width:100%;"
         >
           <a href={url} target="_blank" rel="noopener noreferrer">View on Instagram</a>
         </blockquote>
@@ -22,3 +22,46 @@ const { posts } = Astro.props;
     <script async src="https://www.instagram.com/embed.js"></script>
   </section>
 )}
+
+<style>
+  .ig-grid-section {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 1.5rem 5rem;
+  }
+
+  .ig-grid-section__divider {
+    margin: 0 auto 3rem;
+  }
+
+  .ig-grid-section__heading {
+    font-family: var(--font-serif);
+    font-size: 1.375rem;
+    font-weight: 400;
+    color: var(--color-ink);
+    text-align: center;
+    margin: 0 0 2.25rem;
+  }
+
+  .ig-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  @media (min-width: 768px) {
+    .ig-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .ig-grid__item {
+    margin: 0;
+    border-radius: 0;
+    background: var(--color-canvas);
+    border: 0;
+    max-width: 100%;
+    width: 100%;
+    min-width: 0;
+  }
+</style>

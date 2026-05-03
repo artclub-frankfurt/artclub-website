@@ -1,6 +1,8 @@
 ---
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import InstagramGrid from '../../components/InstagramGrid.astro';
+import { formatEventEyebrow } from '../../lib/events';
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -17,30 +19,128 @@ interface Props {
 const { event } = Astro.props;
 const { Content } = await render(event);
 
-const dateStr = event.data.date.toLocaleDateString('en-GB', {
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-});
+const eyebrow = formatEventEyebrow(event.data.date, event.data.time);
+const description = event.data.subtitle ?? `Event details for ${event.data.title}.`;
 ---
-<BaseLayout title={event.data.title}>
-  <article class="max-w-3xl mx-auto px-4 py-8">
-    <p class="text-sm text-gray-600">{dateStr}</p>
-    <h1 class="text-3xl font-bold mt-1 mb-6">{event.data.title}</h1>
+<BaseLayout title={event.data.title} description={description}>
+  <article class="event-article">
+    {event.data.coverImage && (
+      <figure class="event-article__cover">
+        <Image
+          src={event.data.coverImage}
+          alt={event.data.coverImageAlt ?? `Poster for ${event.data.title}`}
+          widths={[480, 720, 1080, 1440]}
+          sizes="(min-width: 768px) 720px, 100vw"
+          formats={['avif', 'webp']}
+          quality={85}
+          loading="eager"
+          class="event-article__cover-img"
+        />
+        {event.data.coverImageCredit && (
+          <figcaption class="event-article__credit">{event.data.coverImageCredit}</figcaption>
+        )}
+      </figure>
+    )}
+    <header class="event-article__header">
+      <p class="eyebrow event-article__label">Event</p>
+      <p class="eyebrow event-article__date">{eyebrow}</p>
+      <h1 class="event-article__title">{event.data.title}</h1>
+      {event.data.subtitle && (
+        <p class="event-article__subtitle">{event.data.subtitle}</p>
+      )}
+      <a
+        href={event.data.lumaUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-primary event-article__cta"
+      >
+        Register on Luma →
+      </a>
+    </header>
 
-    <a
-      href={event.data.lumaUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      class="inline-block bg-black text-white px-5 py-2.5 rounded-md font-medium hover:bg-gray-800 transition mb-8"
-    >
-      Register on Luma →
-    </a>
+    <div class="hairline event-article__divider"></div>
 
-    <div class="prose max-w-none">
+    <div class="event-article__body markdown-prose">
       <Content />
     </div>
   </article>
 
-  <InstagramGrid posts={event.data.instagramPosts} />
+  {event.data.instagramPosts.length > 0 && (
+    <InstagramGrid posts={event.data.instagramPosts} />
+  )}
 </BaseLayout>
+
+<style>
+  .event-article {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 4.5rem 1.5rem 3rem;
+  }
+
+  .event-article__cover {
+    margin: 0 0 3rem;
+  }
+
+  .event-article__cover-img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .event-article__credit {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 0.8125rem;
+    color: var(--color-ink-3);
+    text-align: center;
+    margin: 0.75rem 0 0;
+    line-height: 1.45;
+  }
+
+  .event-article__header {
+    text-align: center;
+  }
+
+  .event-article__label {
+    margin: 0 0 0.5rem;
+  }
+
+  .event-article__date {
+    color: var(--color-ink-2);
+    margin: 0 0 1.4rem;
+  }
+
+  .event-article__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-display);
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--color-ink);
+    margin: 0 0 0.85rem;
+  }
+
+  .event-article__subtitle {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--color-ink-2);
+    margin: 0 0 1.75rem;
+  }
+
+  .event-article__cta {
+    margin-top: 0.25rem;
+  }
+
+  .event-article__divider {
+    margin: 3rem 0 2.5rem;
+  }
+
+  @media (max-width: 640px) {
+    .event-article {
+      padding: 3rem 1.25rem 2.5rem;
+    }
+    .event-article__title {
+      font-size: 2.25rem;
+    }
+  }
+</style>

@@ -6,23 +6,118 @@ import { siteConfig } from '../lib/siteConfig';
 const contact = await getEntry('site', 'contact');
 if (!contact) throw new Error('src/content/site/contact.md is missing');
 const { Content } = await render(contact);
+
+const profileUrl = siteConfig.socialLinks.instagram;
+const handleMatch = profileUrl.match(/instagram\.com\/([^\/?#]+)/);
+const handle = handleMatch ? `@${handleMatch[1]}` : '@artclub_frankfurt';
 ---
-<BaseLayout title="Contact">
-  <article class="max-w-3xl mx-auto px-4 py-8">
-    <div class="prose max-w-none">
+<BaseLayout
+  title="Contact"
+  description="Get in touch with Art Club Frankfurt — email, Instagram, and where to find us."
+>
+  <article class="contact-page">
+    <header class="contact-page__header">
+      <h1 class="contact-page__title">Contact</h1>
+    </header>
+
+    <div class="contact-page__body markdown-prose">
       <Content />
     </div>
-    <div class="mt-8 pt-8 border-t space-y-2 text-sm">
-      <p>
-        <strong>Email:</strong>{' '}
-        <a href={`mailto:${siteConfig.contactEmail}`} class="underline">{siteConfig.contactEmail}</a>
-      </p>
-      <p>
-        <strong>Instagram:</strong>{' '}
-        <a href={siteConfig.socialLinks.instagram} target="_blank" rel="noopener noreferrer" class="underline">
-          @{siteConfig.socialLinks.instagram.split('/').filter(Boolean).pop()}
-        </a>
-      </p>
-    </div>
+
+    <dl class="contact-blocks">
+      <div class="contact-block">
+        <dt class="eyebrow contact-block__label">Email</dt>
+        <dd class="contact-block__value">
+          <a href={`mailto:${siteConfig.contactEmail}`} class="contact-block__link">
+            {siteConfig.contactEmail}
+          </a>
+        </dd>
+      </div>
+      <div class="contact-block">
+        <dt class="eyebrow contact-block__label">Instagram</dt>
+        <dd class="contact-block__value">
+          <a
+            href={profileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="contact-block__link"
+          >
+            {handle}
+          </a>
+        </dd>
+      </div>
+    </dl>
   </article>
 </BaseLayout>
+
+<style>
+  .contact-page {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 5rem 1.5rem 6rem;
+  }
+
+  .contact-page__header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .contact-page__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-display);
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .contact-page__body {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .contact-blocks {
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .contact-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2.25rem 0;
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .contact-block__label {
+    margin: 0 0 0.65rem;
+  }
+
+  .contact-block__value {
+    margin: 0;
+  }
+
+  .contact-block__link {
+    font-family: var(--font-serif);
+    font-size: 1.375rem;
+    color: var(--color-burgundy);
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+  .contact-block__link:hover {
+    color: var(--color-burgundy-deep);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (max-width: 640px) {
+    .contact-page {
+      padding: 3rem 1.25rem 4rem;
+    }
+    .contact-page__header { margin-bottom: 2.25rem; }
+    .contact-page__title { font-size: 2.25rem; }
+    .contact-block__link { font-size: 1.25rem; }
+  }
+</style>

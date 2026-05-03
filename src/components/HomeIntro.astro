@@ -1,0 +1,57 @@
+---
+import { getEntry, render } from 'astro:content';
+
+const home = await getEntry('site', 'home');
+const hasBody = !!home && typeof home.body === 'string' && home.body.trim().length > 0;
+const Content = home && hasBody ? (await render(home)).Content : null;
+---
+{Content && (
+  <section class="home-intro">
+    <div class="home-intro__inner">
+      <p class="eyebrow home-intro__eyebrow">About</p>
+      <div class="home-intro__body markdown-prose">
+        <Content />
+      </div>
+      <a href="/about" class="link-chrome home-intro__link">Read more →</a>
+    </div>
+  </section>
+)}
+
+<style>
+  .home-intro {
+    background: var(--color-canvas);
+    padding: 4.5rem 1.5rem 4rem;
+  }
+
+  .home-intro__inner {
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .home-intro__eyebrow {
+    margin: 0 0 1.5rem;
+  }
+
+  .home-intro__body {
+    margin-bottom: 1.5rem;
+  }
+
+  .home-intro__body :global(p) {
+    text-align: center;
+  }
+
+  .home-intro__body :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .home-intro__link {
+    display: inline-block;
+  }
+
+  @media (max-width: 640px) {
+    .home-intro {
+      padding: 3.5rem 1.25rem 3rem;
+    }
+  }
+</style>

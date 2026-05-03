@@ -237,29 +237,64 @@ All content is edited on github.com. You don't need to install anything.
 
 ### Add a new event
 
-1. Go to `src/content/events/` on github.com → "Add file" → "Create new file".
-2. Name it like `2026-09-15-autumn-mixer.md` (date prefix keeps the folder organized; the URL slug comes from the full filename minus `.md`).
-3. Paste this template and fill it in:
+A copy-pasteable starter template lives at [`src/content/events/_TEMPLATE.md`](src/content/events/_TEMPLATE.md). The leading underscore tells Astro to skip it during the build, so it's there purely as a reference you can copy from.
 
-   ```markdown
-   ---
-   title: "Your Event Title"
-   date: 2026-09-15
-   time: "7:00 PM"
-   subtitle: "Frankfurt · Schirn Kunsthalle · Free for members"
-   lumaUrl: "https://lu.ma/your-luma-event-id"
-   ---
+**Step by step on github.com:**
 
-   The full description of your event goes here. You can use multiple
-   paragraphs, **bold**, *italic*, [links](https://example.com), and lists:
+1. **Open the template in a new tab** — go to `src/content/events/_TEMPLATE.md`, click **Raw**. Keep this tab open.
+2. **Back in the events folder** — go to `src/content/events/` → click **Add file** → **Create new file**.
+3. **Name your file** with a date prefix and a short slug, e.g. `2026-09-15-autumn-mixer.md`. The URL becomes `/events/2026-09-15-autumn-mixer/`.
+4. **Paste the template content** from your other tab into the editor.
+5. **Fill in your values**:
+   - `title` — the event name in `"double quotes"`.
+   - `date` — the date in `YYYY-MM-DD` format. **No quotes.**
+   - `time` *(optional)* — display time as a string, e.g. `"7:00 PM"`. Leave the line out if you don't have a time yet.
+   - `subtitle` *(optional)* — short one-line venue and details. Shows in italics below the title.
+   - `lumaUrl` — the Luma event URL. Required.
+   - `coverImage` *(optional)* — the event poster, see "Add an event poster" below.
+   - Below the second `---`, the body is the full description in markdown.
+6. **Commit changes** at the bottom of the page.
 
-   - one
-   - two
+The event appears on the site within ~30 seconds.
+
+**Quick reference for what the eyebrow line shows:**
+- With `time` set: `MAY 6 · 7:00 PM`
+- Without `time`: `MAY 6 · 2026`
+
+### Add an event poster (cover image)
+
+The poster shows as a small thumbnail on the `/events` listing and as the full-width header image on the event's own page. It's optional — events without a poster render in text-only style, which is fine.
+
+**Step by step:**
+
+1. On github.com, go to `src/content/events/` → **Add file** → **Upload files**.
+2. **Drag the poster image** onto the page. JPG / PNG / WebP all work.
+3. **Name it to match the event filename**, replacing the extension — e.g., for the event `2026-09-15-autumn-mixer.md`, name the poster `2026-09-15-autumn-mixer.jpg`. This keeps each event paired with its poster in the folder listing.
+4. Commit.
+5. Open the event's `.md` file on github.com → pencil icon → add this line to the frontmatter (between the `---`):
+   ```yaml
+   coverImage: ./2026-09-15-autumn-mixer.jpg
    ```
+   The `./` is required — it tells the site the image lives next to the .md file. Use the exact filename you uploaded.
+6. Commit. The poster appears on the site within ~30 seconds.
 
-   Both `time` and `subtitle` are optional — leave them out if you don't have them. With `time`, the event row reads `MAY 6 · 7:00 PM`; without, it reads `MAY 6 · 2026`. Subtitle is the short single-line venue/details that shows below the title.
+**Notes:**
+- The site automatically resizes and converts the image (AVIF / WebP / JPG fallback, multiple resolutions) — upload the original at full quality, no need to compress yourself.
+- The same image is used everywhere — small thumbnail on `/events`, mid-sized on the home page, full-width on the event's own page. You only upload it once.
+- If you uploaded the wrong file or want to swap posters: delete the old image, upload the new one, update the `coverImage` line if the filename changed.
+- If the image and the `.md` file are committed together, the site updates in one go.
 
-4. Commit. The event appears on the site within ~30 seconds.
+**Optional credit + alt text** — for artworks, you'll usually want to attribute the artist:
+
+```yaml
+coverImageAlt: "A red-ink painting with sweeping circular gestural marks on cream background"
+coverImageCredit: "Cy Twombly, Untitled (Bacchus), 2008. Photo: Schirn Kunsthalle"
+```
+
+- `coverImageAlt` — a sentence describing what's in the image. Read aloud by screen readers; not visible. Without it, the site uses "Poster for [event title]".
+- `coverImageCredit` — the visible attribution shown below the image on the event detail page and the home page. Standard art-credit format works well: `Artist, *Title*, Year. Photo: Source.` Markdown italics work here too.
+
+Both are optional; leave the line out if you don't have it.
 
 ### Add post-event photos
 

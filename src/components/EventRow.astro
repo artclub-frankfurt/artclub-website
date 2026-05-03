@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import { formatEventEyebrow } from '../lib/events';
 
@@ -11,6 +12,19 @@ const eyebrow = formatEventEyebrow(data.date, data.time);
 const href = `/events/${event.id}`;
 ---
 <a href={href} class="event-row">
+  {data.coverImage && (
+    <div class="event-row__cover">
+      <Image
+        src={data.coverImage}
+        alt={data.coverImageAlt ?? ''}
+        widths={[120, 200, 320]}
+        sizes="(min-width: 768px) 120px, 96px"
+        formats={['avif', 'webp']}
+        quality={80}
+        class="event-row__cover-img"
+      />
+    </div>
+  )}
   <div class="event-row__main">
     <p class="eyebrow event-row__eyebrow">{eyebrow}</p>
     <h3 class="event-row__title">{data.title}</h3>
@@ -25,12 +39,26 @@ const href = `/events/${event.id}`;
   .event-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 1.5rem;
     padding: 2rem 0;
     border-top: 1px solid var(--color-hairline);
     text-decoration: none;
     color: inherit;
+  }
+
+  .event-row__cover {
+    flex: 0 0 auto;
+    width: 96px;
+    height: 96px;
+    overflow: hidden;
+    background: var(--color-canvas-warm);
+  }
+
+  .event-row__cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   .event-row__main {
@@ -72,8 +100,22 @@ const href = `/events/${event.id}`;
   .event-row:hover .event-row__title { color: var(--color-burgundy); }
   .event-row:hover .event-row__arrow { color: var(--color-burgundy); }
 
+  @media (min-width: 768px) {
+    .event-row__cover {
+      width: 120px;
+      height: 120px;
+    }
+  }
+
   @media (max-width: 480px) {
-    .event-row { padding: 1.5rem 0; }
+    .event-row {
+      padding: 1.5rem 0;
+      gap: 1rem;
+    }
+    .event-row__cover {
+      width: 72px;
+      height: 72px;
+    }
     .event-row__title { font-size: 1.5rem; }
   }
 </style>
