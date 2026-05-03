@@ -33,6 +33,20 @@ Prioritized follow-ups for the Art Club Frankfurt website. Pick from the top dow
 - Vercel Web Analytics is privacy-friendly + free tier + one-line addition (`@vercel/analytics` in the BaseLayout). Or Plausible / Cloudflare Web Analytics as alternatives.
 - No cookie banner needed (no PII).
 
+### 🟢 Add PR preview deployments (optional)
+- Currently only `main` deploys; PR branches don't get preview URLs
+- Easy to add: a second workflow file (`preview.yml`) triggering on `pull_request`, running `vercel deploy` (no `--prod`), commenting the URL on the PR
+- Skip until a designer or non-dev reviewer actually needs visual previews
+
+## Routine maintenance
+
+These aren't projects, just things to glance at periodically.
+
+- **Rotate `VERCEL_TOKEN` annually** (or sooner if the Vercel team owner changes). At <https://vercel.com/account/tokens>, revoke the old token, create a new one, update the GitHub repo secret. ~2 min. The deploy workflow continues working without redeploying.
+- **Glance at GitHub Actions usage** every few months: GitHub repo → Actions → top right "Usage". Public repos get unlimited minutes, but worth a sanity check that nothing's looping.
+- **Bump dependencies** every 1-3 months: `pnpm update --latest` on a feature branch, run `pnpm test && pnpm build`, open a PR. Astro and Tailwind major bumps may require config tweaks — read their migration guides first.
+- **Review the `Done so far` list** below when handing the project to a new tech contact: confirms everything that's currently true so they know what they're inheriting.
+
 ## Done so far
 
 - ✅ Astro 6 + Tailwind v4 scaffold, all deps strictly pinned, `.npmrc` enforces save-exact
@@ -47,4 +61,5 @@ Prioritized follow-ups for the Art Club Frankfurt website. Pick from the top dow
 - ✅ behold.so Instagram carousel live on home page (widget ID `0NpO39PsREMoYX8tp042`)
 - ✅ Live on `https://artclub-frankfurt.de` via Vercel; DNS records `A @ → 216.198.79.1` and `CNAME www → cname.vercel-dns.com` at Strato; Zoho email untouched
 - ✅ Branch protection on `main`; PR-based code workflow documented in README §4.1
-- ✅ Deploy via GitHub Actions (`.github/workflows/deploy.yml`) using a Vercel token, bypassing Hobby's commit-author check; Vercel git integration disconnected
+- ✅ Deploy via GitHub Actions (`.github/workflows/deploy.yml`) using a Vercel token; Vercel git integration disconnected. Architectural choice for sovereignty + portability + test-gating (see README §5).
+- ✅ Repo made public — git history scanned clean of secrets; unlocks free unlimited Actions minutes; aligns with student-association open ethos.

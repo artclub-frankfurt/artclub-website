@@ -33,6 +33,7 @@ This site follows a strict-by-default dependency posture:
 - **Minimal direct deps.** Total: `astro`, `@tailwindcss/vite`, `tailwindcss` (runtime); `vitest` (dev only). Nothing exotic.
 - **No runtime third-party JS via npm.** External JS comes from two `<script>` tags loaded by URL: behold.so on the home page, Instagram `embed.js` on event detail pages with photos. Both render gracefully if the script fails (carousel hidden / "View on Instagram" link fallback).
 - **Upgrades are explicit.** To bump a dep, run `pnpm update <name> --latest`, review the changelog, run `pnpm test && pnpm build`, then commit with the version change in the message.
+- **Repository is public.** Intentional: nothing sensitive in the code (placeholder content + behold widget ID, the latter visible in deployed HTML anyway); unlocks free unlimited GitHub Actions minutes; fits the open-by-default ethos of a student association. All real credentials (Vercel token, etc.) live in GitHub Actions secrets — never in the repo. Git history was scanned for accidentally-committed secrets before going public.
 
 ## 3. Repo layout
 
@@ -106,7 +107,13 @@ This PR workflow only applies to **code changes**. Editing markdown content via 
 
 ## 5. Deploy
 
-Deploys are triggered by **GitHub Actions** (see `.github/workflows/deploy.yml`), not by Vercel's git integration. The workflow runs on every push to `main` (including merges), runs tests, builds with the Vercel CLI, and uploads to Vercel using a token. This pattern was chosen so we stay on Vercel's free Hobby plan even though the team owner and the developer are different GitHub accounts (Hobby otherwise blocks deploys triggered by non-team-owner commit authors).
+Deploys are triggered by **GitHub Actions** (see `.github/workflows/deploy.yml`), not by Vercel's git integration. This was a deliberate architectural choice for three reasons:
+
+1. **Sovereignty.** The build & deploy pipeline lives in the repo, version-controlled, PR-reviewable, easy to audit and roll back. It's not buried in a Vercel dashboard nobody else has access to.
+2. **Portability.** Swapping hosts later (Cloudflare Pages, Netlify, S3+CloudFront, …) is a 5-line edit to the workflow file instead of rebuilding a pipeline from scratch. See [How to swap hosts](#how-to-swap-hosts) below.
+3. **Test gating.** The workflow runs `pnpm test` before deploying. A failing test aborts the deploy, preventing regressions from reaching production. Vercel's native git auto-deploy doesn't run tests.
+
+The trade-off is ~1-2 min slower deploys (vs ~30 sec for native Vercel) and no automatic per-PR preview URLs. Both are acceptable for the project's update cadence.
 
 ### How a deploy happens (current state)
 
@@ -149,9 +156,67 @@ The custom domain is wired into Vercel separately from the deploy workflow. The 
 
 ### Why git is disconnected on the Vercel side
 
-Vercel's project has its **Git** integration disconnected (Vercel project → Settings → Git → "Disconnect"). This stops Vercel from trying (and failing) to deploy on each git push. All deploys are now driven by GitHub Actions instead. The Vercel project itself, custom domain, deploy history, environment variables, and build settings are all preserved — only the auto-deploy webhook is disabled.
+Vercel's project has its **Git** integration disconnected (Vercel project → Settings → Git → "Disconnect"). This avoids two parallel deploy pipelines competing — Actions handles every deploy, Vercel just serves the artifacts. The Vercel project itself, custom domain, deploy history, environment variables, and build settings are all preserved — only the auto-deploy webhook is disabled.
 
-To revert this setup later (e.g., if upgrading to Vercel Pro removes the author restriction): re-connect git in Vercel's settings, delete `.github/workflows/deploy.yml`, and you're back to the standard Vercel auto-deploy.
+To revert (e.g., if you ever decide to give up the test-gating + portability benefits in exchange for ~1 min faster deploys + auto preview URLs): re-connect git in Vercel's settings, delete `.github/workflows/deploy.yml`, and you're back to standard Vercel auto-deploy.
+
+### How to swap hosts
+
+The workflow is structured so the universal "build" portion (`pnpm build` → `./dist`) is host-agnostic; only the bottom block is host-specific. To migrate, replace those steps and add the new host's secrets to the GitHub repo.
+
+**To Cloudflare Pages** *(requires moving DNS to Cloudflare nameservers — incompatible with Strato-managed DNS for the apex domain; reconsider if email is also at Strato/external)*:
+
+```yaml
+- name: Build site
+  run: pnpm build
+
+- name: Deploy to Cloudflare Pages
+  run: npx --yes wrangler@latest pages deploy dist --project-name=artclub-website --branch=main
+  env:
+    CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+```
+
+**To Netlify** *(DNS stays at Strato; Zoho email untouched — same DNS pattern as the current Vercel setup)*:
+
+```yaml
+- name: Build site
+  run: pnpm build
+
+- name: Deploy to Netlify
+  run: npx --yes netlify-cli@latest deploy --prod --dir=./dist
+  env:
+    NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+    NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+```
+
+**To plain S3 + CloudFront** *(maximum sovereignty, full AWS bill, more setup)*:
+
+```yaml
+- name: Build site
+  run: pnpm build
+
+- name: Deploy to S3
+  run: aws s3 sync ./dist s3://artclub-frankfurt-www --delete
+  env:
+    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    AWS_REGION: eu-central-1
+
+- name: Invalidate CloudFront
+  run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+  env:
+    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+```
+
+In all cases the migration is:
+
+1. Sign up on the new host, create the project, get its access token + project/site ID (or AWS keys).
+2. Add those as GitHub repo secrets (replacing the `VERCEL_*` ones).
+3. Update DNS records at Strato (or, for Cloudflare Pages, move nameservers to Cloudflare).
+4. Verify HTTPS provisions and the site is reachable.
+5. Decommission the old Vercel project once the new one is validated.
 
 ### Rollback
 
