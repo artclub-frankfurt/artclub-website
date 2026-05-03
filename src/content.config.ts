@@ -2,8 +2,6 @@ import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
 const events = defineCollection({
-  // Pattern excludes files starting with `_` so `_TEMPLATE.md` (the editor's
-  // copy-paste reference) doesn't get treated as a real event.
   loader: glob({ pattern: ['**/*.md', '!**/_*.md'], base: './src/content/events' }),
   schema: ({ image }) => z.object({
     title: z.string(),

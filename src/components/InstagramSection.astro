@@ -1,13 +1,10 @@
 ---
-import { siteConfig } from '../lib/siteConfig';
+import { siteConfig, instagramHandle } from '../lib/siteConfig';
 import InstagramSectionBehold from './InstagramSectionBehold.astro';
 import InstagramSectionCurated from './InstagramSectionCurated.astro';
 
 const ig = siteConfig.instagram;
 const profileUrl = siteConfig.socialLinks.instagram;
-
-const handleMatch = profileUrl.match(/instagram\.com\/([^\/?#]+)/);
-const handle = handleMatch ? `@${handleMatch[1]}` : '@artclub_frankfurt';
 ---
 <section class="ig-section">
   <div class="ig-section__inner">
@@ -19,7 +16,7 @@ const handle = handleMatch ? `@${handleMatch[1]}` : '@artclub_frankfurt';
         rel="noopener noreferrer"
         class="link-chrome ig-section__link"
       >
-        {handle} →
+        {instagramHandle} →
       </a>
     </header>
     <div class="ig-section__body">

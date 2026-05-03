@@ -4,8 +4,7 @@ import { getCollection } from 'astro:content';
 import { partitionEvents, formatEventEyebrow } from '../lib/events';
 
 const all = await getCollection('events');
-const withSlug = all.map(e => ({ ...e, slug: e.id }));
-const { upcoming } = partitionEvents(withSlug);
+const { upcoming } = partitionEvents(all);
 const next = upcoming[0];
 ---
 <section class="featured-event">
@@ -18,7 +17,7 @@ const next = upcoming[0];
             <Image
               src={next.data.coverImage}
               alt={next.data.coverImageAlt ?? `Poster for ${next.data.title}`}
-              widths={[280, 400, 560, 720]}
+              widths={[360, 720]}
               sizes="(min-width: 640px) 360px, 60vw"
               formats={['avif', 'webp']}
               quality={82}
@@ -74,8 +73,6 @@ const next = upcoming[0];
     max-width: 100%;
   }
 
-  /* Same image works for portrait and landscape posters: width capped at
-   * 360px and height at 280px so portraits don't dominate the section. */
   .featured-event__cover {
     display: block;
     max-width: 360px;
