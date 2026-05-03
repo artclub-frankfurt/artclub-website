@@ -2,8 +2,7 @@
 import { getEntry, render } from 'astro:content';
 
 const home = await getEntry('site', 'home');
-const hasBody = !!home && typeof home.body === 'string' && home.body.trim().length > 0;
-const Content = home && hasBody ? (await render(home)).Content : null;
+const Content = home?.body?.trim() ? (await render(home)).Content : null;
 ---
 {Content && (
   <section class="home-intro">

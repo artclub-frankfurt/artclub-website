@@ -1,15 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getEntry, render } from 'astro:content';
-import { siteConfig } from '../lib/siteConfig';
+import { siteConfig, instagramHandle } from '../lib/siteConfig';
 
 const contact = await getEntry('site', 'contact');
 if (!contact) throw new Error('src/content/site/contact.md is missing');
 const { Content } = await render(contact);
-
-const profileUrl = siteConfig.socialLinks.instagram;
-const handleMatch = profileUrl.match(/instagram\.com\/([^\/?#]+)/);
-const handle = handleMatch ? `@${handleMatch[1]}` : '@artclub_frankfurt';
 ---
 <BaseLayout
   title="Contact"
@@ -37,12 +33,12 @@ const handle = handleMatch ? `@${handleMatch[1]}` : '@artclub_frankfurt';
         <dt class="eyebrow contact-block__label">Instagram</dt>
         <dd class="contact-block__value">
           <a
-            href={profileUrl}
+            href={siteConfig.socialLinks.instagram}
             target="_blank"
             rel="noopener noreferrer"
             class="contact-block__link"
           >
-            {handle}
+            {instagramHandle}
           </a>
         </dd>
       </div>
