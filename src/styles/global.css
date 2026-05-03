@@ -1,5 +1,134 @@
 @import "tailwindcss";
 
+/* ---------- Design tokens ----------
+ * Editorial / gallery system. White is the canvas, burgundy is the only accent.
+ * Tokens live in @theme so they exist as both CSS variables and Tailwind utilities.
+ */
+@theme {
+  /* Brand palette */
+  --color-burgundy:      #690000;
+  --color-burgundy-deep: #520000;
+  --color-canvas:        #ffffff;
+  --color-canvas-warm:   #fafaf6;
+  --color-ink:           #1a1a1a;
+  --color-ink-2:         #555555;
+  --color-ink-3:         #888888;
+  --color-hairline:      #e2e2e0;
+
+  /* Type families */
+  --font-serif: "Times New Roman", Times, "Liberation Serif", serif;
+  --font-sans:  ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+                "Helvetica Neue", Arial, sans-serif;
+
+  /* Editorial type ramp */
+  --text-display-xl: 3.375rem;  /* hero ~54px  */
+  --text-display:    3rem;       /* page title ~48px */
+  --text-h1:         2.25rem;    /* section ~36px */
+  --text-h2:         1.75rem;    /* event row ~28px */
+  --text-body:       1.0625rem;  /* prose ~17px */
+  --text-meta:       0.8125rem;  /* meta ~13px */
+  --text-wordmark:   1.375rem;   /* wordmark ~22px */
+  --text-nav:        0.6875rem;  /* nav ~11px */
+  --text-button:     0.625rem;   /* button ~10px */
+  --text-eyebrow:    0.625rem;   /* eyebrow ~10px */
+
+  /* Tracking presets */
+  --tracking-wordmark: 0.075em;
+  --tracking-nav:      0.22em;
+  --tracking-button:   0.2em;
+  --tracking-eyebrow:  0.18em;
+}
+
+/* ---------- Base ---------- */
 html {
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: var(--font-serif);
+  color: var(--color-ink);
+  background: var(--color-canvas);
+}
+
+body {
+  font-family: var(--font-serif);
+  background: var(--color-canvas);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ---------- Component primitives ----------
+ * Three button variants only. Plus the eyebrow label, the chrome link, the
+ * wordmark, and a hairline rule. Pages compose using these.
+ */
+@layer components {
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-burgundy);
+    color: #fff;
+    font-family: var(--font-sans);
+    font-size: var(--text-button);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-button);
+    padding: 0.95rem 1.7rem;
+    border: 1px solid var(--color-burgundy);
+    transition: background-color 150ms ease, border-color 150ms ease;
+  }
+  .btn-primary:hover {
+    background: var(--color-burgundy-deep);
+    border-color: var(--color-burgundy-deep);
+  }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: var(--color-burgundy);
+    font-family: var(--font-sans);
+    font-size: var(--text-button);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-button);
+    padding: 0.95rem 1.7rem;
+    border: 1px solid var(--color-burgundy);
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+  .btn-outline:hover {
+    background: var(--color-burgundy);
+    color: #fff;
+  }
+
+  .link-chrome {
+    color: var(--color-burgundy);
+    font-family: var(--font-sans);
+    font-size: var(--text-button);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-button);
+    transition: color 150ms ease;
+  }
+  .link-chrome:hover { color: var(--color-burgundy-deep); }
+
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: var(--text-eyebrow);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-ink-3);
+  }
+
+  .wordmark {
+    font-family: var(--font-serif);
+    font-size: var(--text-wordmark);
+    font-weight: 400;
+    letter-spacing: var(--tracking-wordmark);
+    color: var(--color-ink);
+  }
+
+  .hairline {
+    border-top: 1px solid var(--color-hairline);
+  }
 }
