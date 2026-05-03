@@ -237,29 +237,28 @@ All content is edited on github.com. You don't need to install anything.
 
 ### Add a new event
 
-1. Go to `src/content/events/` on github.com → "Add file" → "Create new file".
-2. Name it like `2026-09-15-autumn-mixer.md` (date prefix keeps the folder organized; the URL slug comes from the full filename minus `.md`).
-3. Paste this template and fill it in:
+A copy-pasteable starter template lives at [`src/content/events/_TEMPLATE.md`](src/content/events/_TEMPLATE.md). The leading underscore tells Astro to skip it during the build, so it's there purely as a reference you can copy from.
 
-   ```markdown
-   ---
-   title: "Your Event Title"
-   date: 2026-09-15
-   time: "7:00 PM"
-   subtitle: "Frankfurt · Schirn Kunsthalle · Free for members"
-   lumaUrl: "https://lu.ma/your-luma-event-id"
-   ---
+**Step by step on github.com:**
 
-   The full description of your event goes here. You can use multiple
-   paragraphs, **bold**, *italic*, [links](https://example.com), and lists:
+1. **Open the template in a new tab** — go to `src/content/events/_TEMPLATE.md`, click **Raw**. Keep this tab open.
+2. **Back in the events folder** — go to `src/content/events/` → click **Add file** → **Create new file**.
+3. **Name your file** with a date prefix and a short slug, e.g. `2026-09-15-autumn-mixer.md`. The URL becomes `/events/2026-09-15-autumn-mixer/`.
+4. **Paste the template content** from your other tab into the editor.
+5. **Fill in your values**:
+   - `title` — the event name in `"double quotes"`.
+   - `date` — the date in `YYYY-MM-DD` format. **No quotes.**
+   - `time` *(optional)* — display time as a string, e.g. `"7:00 PM"`. Leave the line out if you don't have a time yet.
+   - `subtitle` *(optional)* — short one-line venue and details. Shows in italics below the title.
+   - `lumaUrl` — the Luma event URL. Required.
+   - Below the second `---`, the body is the full description in markdown.
+6. **Commit changes** at the bottom of the page.
 
-   - one
-   - two
-   ```
+The event appears on the site within ~30 seconds.
 
-   Both `time` and `subtitle` are optional — leave them out if you don't have them. With `time`, the event row reads `MAY 6 · 7:00 PM`; without, it reads `MAY 6 · 2026`. Subtitle is the short single-line venue/details that shows below the title.
-
-4. Commit. The event appears on the site within ~30 seconds.
+**Quick reference for what the eyebrow line shows:**
+- With `time` set: `MAY 6 · 7:00 PM`
+- Without `time`: `MAY 6 · 2026`
 
 ### Add post-event photos
 

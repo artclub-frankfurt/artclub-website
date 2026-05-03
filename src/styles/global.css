@@ -138,4 +138,77 @@
   .hairline {
     border-top: 1px solid var(--color-hairline);
   }
+
+  /* Editorial markdown body. Used to wrap rendered <Content /> on prose
+   * pages (event detail, about). Per-page typography overrides go in
+   * the page's scoped style block.
+   */
+  .markdown-prose {
+    font-family: var(--font-serif);
+    color: var(--color-ink);
+  }
+  .markdown-prose > :first-child { margin-top: 0; }
+  .markdown-prose > :last-child { margin-bottom: 0; }
+
+  .markdown-prose p {
+    font-size: var(--text-body);
+    line-height: 1.65;
+    margin: 0 0 1.4em;
+  }
+
+  .markdown-prose h2 {
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--color-ink);
+    margin: 2.25em 0 0.6em;
+  }
+
+  .markdown-prose h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--color-ink);
+    margin: 1.75em 0 0.5em;
+  }
+
+  .markdown-prose ul,
+  .markdown-prose ol {
+    font-size: var(--text-body);
+    line-height: 1.65;
+    margin: 0 0 1.4em;
+    padding-left: 1.4em;
+  }
+  .markdown-prose ul { list-style: disc; }
+  .markdown-prose ol { list-style: decimal; }
+  .markdown-prose li { margin: 0.4em 0; }
+  .markdown-prose li::marker { color: var(--color-ink-3); }
+
+  .markdown-prose a {
+    color: var(--color-burgundy);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    transition: color 150ms ease;
+  }
+  .markdown-prose a:hover { color: var(--color-burgundy-deep); }
+
+  .markdown-prose strong { font-weight: 700; }
+  .markdown-prose em { font-style: italic; }
+
+  .markdown-prose blockquote {
+    font-style: italic;
+    font-size: 1.125rem;
+    line-height: 1.55;
+    color: var(--color-ink);
+    margin: 2em 0;
+    padding-left: 1.25em;
+    border-left: 2px solid var(--color-burgundy);
+  }
+
+  .markdown-prose hr {
+    border: 0;
+    border-top: 1px solid var(--color-hairline);
+    margin: 2.75em 0;
+  }
 }

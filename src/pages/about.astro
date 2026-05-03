@@ -1,13 +1,105 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getEntry, render } from 'astro:content';
+import { siteConfig } from '../lib/siteConfig';
 
 const about = await getEntry('site', 'about');
 if (!about) throw new Error('src/content/site/about.md is missing');
 const { Content } = await render(about);
+
+const description = 'Art Club Frankfurt — student initiative at Goethe University. Read about our mission, the team, and what we do.';
 ---
-<BaseLayout title="About">
-  <article class="max-w-3xl mx-auto px-4 py-8 prose">
-    <Content />
+<BaseLayout title="About" description={description}>
+  <article class="about-page">
+    <header class="about-page__header">
+      <p class="eyebrow about-page__eyebrow">Student Initiative · Goethe University</p>
+      <h1 class="about-page__title">About</h1>
+    </header>
+    <div class="about-page__body markdown-prose">
+      <Content />
+    </div>
   </article>
+
+  <section class="cta-band">
+    <div class="cta-band__inner">
+      <h2 class="cta-band__title">Become a member</h2>
+      <a
+        href={siteConfig.googleFormUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-primary"
+      >
+        Join us
+      </a>
+    </div>
+  </section>
 </BaseLayout>
+
+<style>
+  .about-page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 5rem 1.5rem 4rem;
+  }
+
+  .about-page__header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+  }
+
+  .about-page__eyebrow {
+    margin: 0 0 1rem;
+  }
+
+  .about-page__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-display);
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  /* Slightly larger heading rhythm for the longer prose register on /about */
+  .about-page__body :global(h2) {
+    font-size: 1.75rem;
+    margin-top: 2.5em;
+  }
+  .about-page__body :global(h3) {
+    font-size: 1.25rem;
+    font-weight: 400;
+    margin-top: 2em;
+  }
+
+  .cta-band {
+    background: var(--color-canvas-warm);
+    padding: 5rem 1.5rem 5.5rem;
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .cta-band__inner {
+    max-width: 680px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .cta-band__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-h1);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--color-ink);
+    margin: 0 0 1.75rem;
+  }
+
+  @media (max-width: 640px) {
+    .about-page {
+      padding: 3rem 1.25rem 3rem;
+    }
+    .about-page__header { margin-bottom: 2.5rem; }
+    .about-page__title { font-size: 2.25rem; }
+
+    .cta-band { padding: 3.5rem 1.25rem 4rem; }
+    .cta-band__title { font-size: 1.875rem; }
+  }
+</style>
