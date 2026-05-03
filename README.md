@@ -251,6 +251,7 @@ A copy-pasteable starter template lives at [`src/content/events/_TEMPLATE.md`](s
    - `time` *(optional)* — display time as a string, e.g. `"7:00 PM"`. Leave the line out if you don't have a time yet.
    - `subtitle` *(optional)* — short one-line venue and details. Shows in italics below the title.
    - `lumaUrl` — the Luma event URL. Required.
+   - `coverImage` *(optional)* — the event poster, see "Add an event poster" below.
    - Below the second `---`, the body is the full description in markdown.
 6. **Commit changes** at the bottom of the page.
 
@@ -259,6 +260,28 @@ The event appears on the site within ~30 seconds.
 **Quick reference for what the eyebrow line shows:**
 - With `time` set: `MAY 6 · 7:00 PM`
 - Without `time`: `MAY 6 · 2026`
+
+### Add an event poster (cover image)
+
+The poster shows as a small thumbnail on the `/events` listing and as the full-width header image on the event's own page. It's optional — events without a poster render in text-only style, which is fine.
+
+**Step by step:**
+
+1. On github.com, go to `src/content/events/` → **Add file** → **Upload files**.
+2. **Drag the poster image** onto the page. JPG / PNG / WebP all work.
+3. **Name it to match the event filename**, replacing the extension — e.g., for the event `2026-09-15-autumn-mixer.md`, name the poster `2026-09-15-autumn-mixer.jpg`. This keeps each event paired with its poster in the folder listing.
+4. Commit.
+5. Open the event's `.md` file on github.com → pencil icon → add this line to the frontmatter (between the `---`):
+   ```yaml
+   coverImage: ./2026-09-15-autumn-mixer.jpg
+   ```
+   The `./` is required — it tells the site the image lives next to the .md file. Use the exact filename you uploaded.
+6. Commit. The poster appears on the site within ~30 seconds.
+
+**Notes:**
+- The site automatically resizes and converts the image (AVIF / WebP / JPG fallback, multiple resolutions) — upload the original at full quality, no need to compress yourself.
+- If you uploaded the wrong file or want to swap posters: delete the old image, upload the new one, update the `coverImage` line if the filename changed.
+- If the image and the `.md` file are committed together, the site updates in one go.
 
 ### Add post-event photos
 
