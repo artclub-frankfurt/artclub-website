@@ -4,27 +4,6 @@ Prioritized follow-ups for the Art Club Frankfurt website. Pick from the top dow
 
 ## Next session
 
-### 🟡 Wire the Instagram carousel via behold.so
-- Sign up at <https://app.behold.so/signup> (free, any email)
-- Add Instagram → log in as `@artclub_frankfurt` and authorize behold
-- Optional but recommended: switch the IG account to **Creator** type first (free, in IG → Settings → Account → "Switch to Professional Account") for a more robust API connection
-- Create a widget (Basic Carousel style is fine to start) → copy the widget ID (UUID-shaped, also visible in the embed snippet's `data-behold-id="..."` attribute)
-- Paste into `src/data/site.json` → `beholdWidgetId`
-- Commit, push → home page goes from "not configured yet" placeholder to live carousel
-- Time: ~5-10 min interactive setup, then 30 sec to wire
-
-### 🟡 Deploy to Vercel
-- Chosen over Cloudflare Pages because: DNS stays at Strato (Zoho email untouched, zero risk); only adds 2 records at Strato instead of full nameserver migration.
-- <https://vercel.com/signup> → "Continue with GitHub" → import `Tseringw/artclub-website` → auto-detects Astro → Deploy.
-- After first deploy: project → Settings → Domains → add `artclub-frankfurt.de`. Vercel shows the DNS records to add at Strato:
-  - `A` record, name `@`, value `76.76.21.21`
-  - `CNAME` record, name `www`, value `cname.vercel-dns.com`
-- At Strato: **Domainverwaltung → DNS-Verwaltung →** add those two records. Don't delete or modify any of the Zoho-related records (MX, SPF/TXT, DKIM).
-- Wait ~5-10 min for HTTPS to provision.
-- Test: `curl -I https://artclub-frankfurt.de` returns 200; send a test email to `info@artclub-frankfurt.de` to confirm Zoho still works.
-- Time: ~15 min total.
-- Effect: live URL she can open on her phone, plus auto-deploy on every push.
-
 ### 🟢 Wire the real Google Form URL
 - When the membership form exists, paste its URL into `src/data/site.json` → `googleFormUrl`
 - "Become a member" + "Join us" buttons become functional immediately
@@ -61,8 +40,11 @@ Prioritized follow-ups for the Art Club Frankfurt website. Pick from the top dow
 - ✅ All 5 page routes (Home, Events index, Event detail, About, Contact)
 - ✅ Responsive nav with hamburger menu on mobile (< 768px)
 - ✅ "Become a member" CTA in nav, linking to Google Form (placeholder URL)
-- ✅ behold.so widget hooked up in code (waiting on widget ID)
 - ✅ Per-event Instagram photo grid component
 - ✅ Site config wired with real values: name "Art Club Frankfurt", tagline, email, IG handle, custom domain
 - ✅ Pushed to <https://github.com/Tseringw/artclub-website>
 - ✅ Comprehensive README + spec + implementation plan in `docs/`
+- ✅ behold.so Instagram carousel live on home page (widget ID `0NpO39PsREMoYX8tp042`)
+- ✅ Live on `https://artclub-frankfurt.de` via Vercel; DNS records `A @ → 216.198.79.1` and `CNAME www → cname.vercel-dns.com` at Strato; Zoho email untouched
+- ✅ Branch protection on `main`; PR-based code workflow documented in README §4.1
+- ✅ Deploy via GitHub Actions (`.github/workflows/deploy.yml`) using a Vercel token, bypassing Hobby's commit-author check; Vercel git integration disconnected

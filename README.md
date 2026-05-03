@@ -67,7 +67,7 @@ pnpm test         # run unit tests (vitest)
 
 ## 4.1 Code contribution workflow (for devs)
 
-The `main` branch is **protected**: direct pushes are rejected. Code changes go through pull requests merged by the repo owner. This is required because Vercel's Hobby plan only deploys commits authored by the team owner — the PR-merge flow ensures every commit on `main` is authored by the merger.
+The `main` branch is **protected**: direct pushes are rejected. Code changes go through pull requests merged by the repo owner. After merging, GitHub Actions deploys the new `main` to Vercel automatically (see §5).
 
 ### Daily workflow
 
@@ -88,19 +88,17 @@ git push -u origin feat/short-description
 gh pr create --fill                          # uses last commit message as title/body
 # OR open the URL printed by `git push` in a browser
 
-# 5. Repo owner reviews and clicks "Squash and merge"
-#    (Vercel auto-deploys the squash-merged commit ~30 sec later)
+# 5. Repo owner reviews and merges
+#    The deploy workflow runs ~1-2 min after the merge.
 
 # 6. Pull main, delete local branch
 git checkout main && git pull
 git branch -d feat/short-description
 ```
 
-### Important: how to merge
+### Merge mode
 
-When merging a PR, the repo owner **must use "Squash and merge"** (not "Create a merge commit", and not "Rebase and merge"). Reason: only squash produces a head commit on `main` authored by the person clicking merge — which is what Vercel's Hobby plan checks before deploying. The other merge modes preserve the original PR author and Vercel will refuse the deploy.
-
-If you ever upgrade to Vercel Pro (or move hosting to Cloudflare Pages / Netlify), this constraint goes away and any merge mode is fine.
+Any merge mode works (squash, merge commit, rebase) — the deploy is decoupled from commit authorship now that GitHub Actions handles it. **Squash-and-merge is still recommended** for cleaner history: each PR becomes one commit on `main`, easy to read and easy to revert.
 
 ### Note for content editors (non-devs)
 
@@ -108,29 +106,52 @@ This PR workflow only applies to **code changes**. Editing markdown content via 
 
 ## 5. Deploy
 
-### One-time setup (Vercel)
+Deploys are triggered by **GitHub Actions** (see `.github/workflows/deploy.yml`), not by Vercel's git integration. The workflow runs on every push to `main` (including merges), runs tests, builds with the Vercel CLI, and uploads to Vercel using a token. This pattern was chosen so we stay on Vercel's free Hobby plan even though the team owner and the developer are different GitHub accounts (Hobby otherwise blocks deploys triggered by non-team-owner commit authors).
 
-1. Push the repo to GitHub (already done).
-2. <https://vercel.com/signup> → "Continue with GitHub". Authorize Vercel to access the `Tseringw` org / your account.
-3. **Add New → Project** → import `Tseringw/artclub-website`. Vercel auto-detects Astro; leave the defaults:
-   - Build command: `pnpm build` (auto)
-   - Output directory: `dist` (auto)
-   - Install command: `pnpm install` (auto)
-4. **Deploy.** First build takes ~2 min. You get a live URL like `https://artclub-website.vercel.app`.
+### How a deploy happens (current state)
 
-### Custom domain (DNS stays at Strato; Zoho email untouched)
+1. PR merged into `main` (or content edit committed via github.com directly to `main`).
+2. GitHub Actions runs `Deploy to Vercel` workflow:
+   - Checks out the repo.
+   - Installs deps with pnpm (frozen lockfile).
+   - Runs `pnpm test` — a failure aborts the deploy.
+   - Installs Vercel CLI.
+   - `vercel pull` — fetches project settings from Vercel using the token.
+   - `vercel build --prod` — builds the site exactly the way Vercel would.
+   - `vercel deploy --prebuilt --prod` — uploads the build to Vercel.
+3. Vercel serves the new build at `artclub-frankfurt.de` within ~1-2 min of merge.
+
+You can also trigger a deploy manually: GitHub repo → Actions → "Deploy to Vercel" → "Run workflow" → Run.
+
+### Required repo secrets
+
+Set in **GitHub repo → Settings → Secrets and variables → Actions**:
+
+| Secret | Where to get it |
+|---|---|
+| `VERCEL_TOKEN` | <https://vercel.com/account/tokens> → Create Token. Owner of the Vercel team must generate it. Treat as sensitive. |
+| `VERCEL_ORG_ID` | Vercel team → Settings → General → Team ID |
+| `VERCEL_PROJECT_ID` | Vercel project → Settings → General → Project ID |
+
+If a secret is missing, the workflow run will fail with a clear `Missing required environment variable` error. Add the secret and re-run.
+
+### Custom domain (DNS at Strato; Zoho email untouched)
+
+The custom domain is wired into Vercel separately from the deploy workflow. The setup, done once:
 
 1. Project → **Settings → Domains** → add `artclub-frankfurt.de`.
-2. Vercel shows the DNS records to add at Strato:
-   - `A` record, name `@`, value `76.76.21.21`
+2. Vercel shows the DNS records to add at Strato (current values; copy what Vercel shows you in case they change):
+   - `A` record, name `@`, value `216.198.79.1` (or whatever Vercel currently recommends)
    - `CNAME` record, name `www`, value `cname.vercel-dns.com`
-3. At Strato (`strato.de` → Customer Service → Domainverwaltung → DNS-Verwaltung): add **only those two records**. Leave everything else (especially MX and TXT/SPF/DKIM for Zoho) exactly as-is.
-4. Vercel auto-provisions HTTPS in ~5 min and verifies the domain.
+3. At Strato (`strato.de` → Customer Service → Domainverwaltung → DNS-Verwaltung): add **only those two records**. Leave everything else (especially `MX` and `TXT` records for Zoho) exactly as-is.
+4. Vercel auto-provisions HTTPS in ~5 min.
 5. Smoke-test: `curl -I https://artclub-frankfurt.de` returns 200; send a test email to `info@artclub-frankfurt.de` to confirm Zoho still receives it.
 
-### Updates
+### Why git is disconnected on the Vercel side
 
-Push to `main` → Vercel rebuilds in ~30 seconds. Branches and PRs get preview deploys automatically.
+Vercel's project has its **Git** integration disconnected (Vercel project → Settings → Git → "Disconnect"). This stops Vercel from trying (and failing) to deploy on each git push. All deploys are now driven by GitHub Actions instead. The Vercel project itself, custom domain, deploy history, environment variables, and build settings are all preserved — only the auto-deploy webhook is disabled.
+
+To revert this setup later (e.g., if upgrading to Vercel Pro removes the author restriction): re-connect git in Vercel's settings, delete `.github/workflows/deploy.yml`, and you're back to the standard Vercel auto-deploy.
 
 ### Rollback
 
@@ -212,7 +233,8 @@ All content is edited on github.com. You don't need to install anything.
 | **Instagram embeds** | Per-event photo grids | `instagramPosts:` array in each event's frontmatter | N/A — Instagram-native |
 | **Luma** | Event registration | `lumaUrl` in each event's frontmatter | N/A — just swap the URL |
 | **Google Form** | Membership signup | `googleFormUrl` in `src/data/site.json` | Swap the URL |
-| **Vercel** | Hosting + CI/CD | Vercel dashboard | Move to Cloudflare Pages or Netlify: connect repo, set build command `pnpm build`, output dir `dist`. (For CF Pages on apex `artclub-frankfurt.de`: requires moving DNS to Cloudflare too.) |
+| **Vercel** | Hosting | Vercel dashboard (project, domain, env vars) | Move to Netlify or Cloudflare Pages: keep `.github/workflows/deploy.yml` as a template, swap CLI commands. (For CF Pages on apex `artclub-frankfurt.de`: requires moving DNS to Cloudflare too.) |
+| **GitHub Actions** | Build + deploy CI | `.github/workflows/deploy.yml` + repo secrets `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` | If the host changes, rewrite this workflow to use the new host's CLI; secrets stay the same shape. |
 | **Strato** | Domain registrar + DNS host | DNS records in Strato Domainverwaltung; `A @ → 76.76.21.21` and `CNAME www → cname.vercel-dns.com` point at Vercel | Move DNS to another provider by exporting/replicating records. |
 | **Zoho Mail** | Email at `info@artclub-frankfurt.de` | MX + SPF/DKIM/DMARC TXT records at Strato | N/A — keep DNS records in place; Zoho is independent of the website host. |
 
@@ -229,9 +251,12 @@ All content is edited on github.com. You don't need to install anything.
 
 ## 9. Troubleshooting
 
-- **Build fails on Vercel but works locally:** check the Node version (Vercel → Settings → General → Node.js version; set to 22.x or higher).
-- **Deploy stuck "in progress":** trigger a new deploy from the dashboard, or push an empty commit (`git commit --allow-empty -m "trigger deploy"`).
-- **Custom domain stuck on "Invalid Configuration":** verify in the Strato DNS panel that the `A @ 76.76.21.21` and `CNAME www cname.vercel-dns.com` records are present and that no conflicting `A`/`AAAA` records remain on `@` or `www`. DNS changes can take up to 30 min to propagate.
+- **Deploy workflow fails with "Missing token" or auth error:** one of the three repo secrets (`VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`) is missing or wrong. Re-check in GitHub → Settings → Secrets and variables → Actions. Token may have expired — regenerate at <https://vercel.com/account/tokens>.
+- **Deploy workflow fails on `pnpm test`:** a unit test failed; the deploy aborted to protect production. Run `pnpm test` locally to reproduce, fix, push.
+- **No deploy ran after merging a PR:** check the **Actions** tab on GitHub. Possible causes: workflow file syntax error (visible in the run log), the merge commit didn't land on `main` (some merge modes can fail silently if branch protection rejects them), or the workflow file was edited in a way that disabled the trigger.
+- **Manual re-deploy needed:** GitHub repo → Actions → "Deploy to Vercel" → "Run workflow" → pick `main` → Run.
+- **Build fails on Vercel but works locally:** check the Node version pinned in `.github/workflows/deploy.yml` matches the local Node version. Currently `node-version: 22`.
+- **Custom domain stuck on "Invalid Configuration":** verify in the Strato DNS panel that the apex `A` record and `CNAME www → cname.vercel-dns.com` are present and that no conflicting `A`/`AAAA` records remain on `@` or `www`. DNS changes can take up to 30 min to propagate.
 - **Email at `info@artclub-frankfurt.de` not arriving after deploy:** verify Zoho's MX records are still in Strato's DNS panel (typically `mx.zoho.eu`/`mx2.zoho.eu`/`mx3.zoho.eu`, or `mx.zoho.com` for US accounts). The Vercel setup should not have touched these — only added two new records.
 - **Instagram embeds show only "View on Instagram" links:** Instagram's `embed.js` failed to load (rate-limited, blocked, or post is private). Refresh; if persistent, the post may be from a private account.
 - **behold widget shows nothing:** check `beholdWidgetId` in `site.json` matches the ID in the behold dashboard, and that the connected Instagram account has at least one public post.
