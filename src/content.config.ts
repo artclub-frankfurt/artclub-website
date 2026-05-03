@@ -12,6 +12,8 @@ const events = defineCollection({
     subtitle: z.string().optional(),
     lumaUrl: z.string().url(),
     coverImage: image().optional(),
+    coverImageAlt: z.string().optional(),
+    coverImageCredit: z.string().optional(),
     instagramPosts: z.array(z.string().url()).optional().default([]),
   }),
 });

@@ -8,6 +8,14 @@ lumaUrl: "https://lu.ma/your-luma-event-id"
 # to src/content/events/ alongside this .md (Add file → Upload files
 # on github.com), then reference it here with a leading "./".
 coverImage: ./your-event-cover.jpg
+# Optional alt text for the cover image — read by screen readers.
+# Describe what the image shows (the artwork, the scene, etc).
+# Leave the line out if you don't have one; a sensible default is used.
+coverImageAlt: "A red-ink painting with sweeping circular gestural marks on cream background"
+# Optional credit / attribution shown beneath the cover image on the
+# event detail page and on the home page. Standard art-credit format:
+# 'Artist, *Title*, Year. Photo: Source.'
+coverImageCredit: "Cy Twombly, Untitled (Bacchus), 2008. Photo: Schirn Kunsthalle"
 ---
 
 Write the full description of the event here. Multiple paragraphs are fine.

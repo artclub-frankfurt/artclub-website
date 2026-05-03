@@ -14,15 +14,20 @@ const next = upcoming[0];
     {next ? (
       <>
         {next.data.coverImage && (
-          <Image
-            src={next.data.coverImage}
-            alt={`Poster for ${next.data.title}`}
-            widths={[320, 480, 640, 800]}
-            sizes="(min-width: 640px) 400px, 70vw"
-            formats={['avif', 'webp']}
-            quality={82}
-            class="featured-event__cover"
-          />
+          <figure class="featured-event__figure">
+            <Image
+              src={next.data.coverImage}
+              alt={next.data.coverImageAlt ?? `Poster for ${next.data.title}`}
+              widths={[280, 400, 560, 720]}
+              sizes="(min-width: 640px) 360px, 60vw"
+              formats={['avif', 'webp']}
+              quality={82}
+              class="featured-event__cover"
+            />
+            {next.data.coverImageCredit && (
+              <figcaption class="featured-event__credit">{next.data.coverImageCredit}</figcaption>
+            )}
+          </figure>
         )}
         <h2 class="featured-event__title">{next.data.title}</h2>
         <p class="featured-event__meta">{formatEventEyebrow(next.data.date, next.data.time)}</p>
@@ -63,12 +68,31 @@ const next = upcoming[0];
     margin: 0 0 1rem;
   }
 
+  .featured-event__figure {
+    margin: 0 auto 1.75rem;
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  /* Same image works for portrait and landscape posters: width capped at
+   * 360px and height at 280px so portraits don't dominate the section. */
   .featured-event__cover {
     display: block;
-    width: 100%;
-    max-width: 400px;
+    max-width: 360px;
+    max-height: 280px;
+    width: auto;
     height: auto;
-    margin: 0 auto 1.75rem;
+    margin: 0 auto;
+  }
+
+  .featured-event__credit {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 0.8125rem;
+    color: var(--color-ink-3);
+    text-align: center;
+    margin: 0.65rem 0 0;
+    line-height: 1.4;
   }
 
   .featured-event__title {

@@ -280,8 +280,21 @@ The poster shows as a small thumbnail on the `/events` listing and as the full-w
 
 **Notes:**
 - The site automatically resizes and converts the image (AVIF / WebP / JPG fallback, multiple resolutions) — upload the original at full quality, no need to compress yourself.
+- The same image is used everywhere — small thumbnail on `/events`, mid-sized on the home page, full-width on the event's own page. You only upload it once.
 - If you uploaded the wrong file or want to swap posters: delete the old image, upload the new one, update the `coverImage` line if the filename changed.
 - If the image and the `.md` file are committed together, the site updates in one go.
+
+**Optional credit + alt text** — for artworks, you'll usually want to attribute the artist:
+
+```yaml
+coverImageAlt: "A red-ink painting with sweeping circular gestural marks on cream background"
+coverImageCredit: "Cy Twombly, Untitled (Bacchus), 2008. Photo: Schirn Kunsthalle"
+```
+
+- `coverImageAlt` — a sentence describing what's in the image. Read aloud by screen readers; not visible. Without it, the site uses "Poster for [event title]".
+- `coverImageCredit` — the visible attribution shown below the image on the event detail page and the home page. Standard art-credit format works well: `Artist, *Title*, Year. Photo: Source.` Markdown italics work here too.
+
+Both are optional; leave the line out if you don't have it.
 
 ### Add post-event photos
 

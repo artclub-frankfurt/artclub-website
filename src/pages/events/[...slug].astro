@@ -28,7 +28,7 @@ const description = event.data.subtitle ?? `Event details for ${event.data.title
       <figure class="event-article__cover">
         <Image
           src={event.data.coverImage}
-          alt={`Poster for ${event.data.title}`}
+          alt={event.data.coverImageAlt ?? `Poster for ${event.data.title}`}
           widths={[480, 720, 1080, 1440]}
           sizes="(min-width: 768px) 720px, 100vw"
           formats={['avif', 'webp']}
@@ -36,6 +36,9 @@ const description = event.data.subtitle ?? `Event details for ${event.data.title
           loading="eager"
           class="event-article__cover-img"
         />
+        {event.data.coverImageCredit && (
+          <figcaption class="event-article__credit">{event.data.coverImageCredit}</figcaption>
+        )}
       </figure>
     )}
     <header class="event-article__header">
@@ -82,6 +85,16 @@ const description = event.data.subtitle ?? `Event details for ${event.data.title
     width: 100%;
     height: auto;
     display: block;
+  }
+
+  .event-article__credit {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 0.8125rem;
+    color: var(--color-ink-3);
+    text-align: center;
+    margin: 0.75rem 0 0;
+    line-height: 1.45;
   }
 
   .event-article__header {

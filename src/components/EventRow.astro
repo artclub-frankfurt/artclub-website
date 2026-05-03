@@ -16,7 +16,7 @@ const href = `/events/${event.id}`;
     <div class="event-row__cover">
       <Image
         src={data.coverImage}
-        alt=""
+        alt={data.coverImageAlt ?? ''}
         widths={[120, 200, 320]}
         sizes="(min-width: 768px) 120px, 96px"
         formats={['avif', 'webp']}
