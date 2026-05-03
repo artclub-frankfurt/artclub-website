@@ -65,6 +65,47 @@ pnpm build        # production build into ./dist
 pnpm test         # run unit tests (vitest)
 ```
 
+## 4.1 Code contribution workflow (for devs)
+
+The `main` branch is **protected**: direct pushes are rejected. Code changes go through pull requests merged by the repo owner. This is required because Vercel's Hobby plan only deploys commits authored by the team owner — the PR-merge flow ensures every commit on `main` is authored by the merger.
+
+### Daily workflow
+
+```bash
+# 1. Branch off main
+git checkout main && git pull
+git checkout -b feat/short-description     # or fix/, chore/, docs/
+
+# 2. Work, commit
+# ...
+git add <files>
+git commit -m "type: short imperative summary"
+
+# 3. Push the branch
+git push -u origin feat/short-description
+
+# 4. Open a PR
+gh pr create --fill                          # uses last commit message as title/body
+# OR open the URL printed by `git push` in a browser
+
+# 5. Repo owner reviews and clicks "Squash and merge"
+#    (Vercel auto-deploys the squash-merged commit ~30 sec later)
+
+# 6. Pull main, delete local branch
+git checkout main && git pull
+git branch -d feat/short-description
+```
+
+### Important: how to merge
+
+When merging a PR, the repo owner **must use "Squash and merge"** (not "Create a merge commit", and not "Rebase and merge"). Reason: only squash produces a head commit on `main` authored by the person clicking merge — which is what Vercel's Hobby plan checks before deploying. The other merge modes preserve the original PR author and Vercel will refuse the deploy.
+
+If you ever upgrade to Vercel Pro (or move hosting to Cloudflare Pages / Netlify), this constraint goes away and any merge mode is fine.
+
+### Note for content editors (non-devs)
+
+This PR workflow only applies to **code changes**. Editing markdown content via github.com (Section 6) commits directly to `main` and triggers a deploy without a PR — that's the intended flow for the editor.
+
 ## 5. Deploy
 
 ### One-time setup (Vercel)
