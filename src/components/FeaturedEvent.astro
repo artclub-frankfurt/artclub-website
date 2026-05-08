@@ -1,11 +1,12 @@
 ---
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
-import { partitionEvents, formatEventEyebrow } from '../lib/events';
+import { partitionEvents, formatEventEyebrow, isRegistrationClosed } from '../lib/events';
 
 const all = await getCollection('events');
 const { upcoming } = partitionEvents(all);
 const next = upcoming[0];
+const registrationClosed = next ? isRegistrationClosed(next) : false;
 ---
 <section class="featured-event">
   <div class="featured-event__inner">
@@ -34,14 +35,18 @@ const next = upcoming[0];
           <p class="featured-event__subtitle">{next.data.subtitle}</p>
         )}
         <div class="featured-event__ctas">
-          <a
-            href={next.data.lumaUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn-primary"
-          >
-            Register on Luma
-          </a>
+          {registrationClosed ? (
+            <span class="btn-disabled" aria-disabled="true">Registration closed</span>
+          ) : (
+            <a
+              href={next.data.lumaUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-primary"
+            >
+              Register on Luma
+            </a>
+          )}
           <a href="/events" class="link-chrome">See all events →</a>
         </div>
       </>

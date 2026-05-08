@@ -4,6 +4,11 @@ date: 2026-09-15
 time: "7:00 PM"
 subtitle: "Frankfurt · Venue name · Free for members"
 lumaUrl: "https://lu.ma/your-luma-event-id"
+# Optional. Set to true to manually close registration before the event date —
+# the "Register on Luma" button becomes a greyed-out "Registration closed".
+# After the event date passes, registration closes automatically regardless of
+# this flag, so leave it as false (or omit) for normal events.
+registrationClosed: false
 # Optional event poster / cover image. First upload the image file
 # to src/content/events/ alongside this .md (Add file → Upload files
 # on github.com), then reference it here with a leading "./".

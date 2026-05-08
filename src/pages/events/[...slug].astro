@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import InstagramGrid from '../../components/InstagramGrid.astro';
-import { formatEventEyebrow } from '../../lib/events';
+import { formatEventEyebrow, isRegistrationClosed } from '../../lib/events';
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -21,6 +21,7 @@ const { Content } = await render(event);
 
 const eyebrow = formatEventEyebrow(event.data.date, event.data.time);
 const description = event.data.subtitle ?? `Event details for ${event.data.title}.`;
+const registrationClosed = isRegistrationClosed(event);
 ---
 <BaseLayout title={event.data.title} description={description}>
   <article class="event-article">
@@ -48,14 +49,20 @@ const description = event.data.subtitle ?? `Event details for ${event.data.title
       {event.data.subtitle && (
         <p class="event-article__subtitle">{event.data.subtitle}</p>
       )}
-      <a
-        href={event.data.lumaUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="btn-primary event-article__cta"
-      >
-        Register on Luma →
-      </a>
+      {registrationClosed ? (
+        <span class="btn-disabled event-article__cta" aria-disabled="true">
+          Registration closed
+        </span>
+      ) : (
+        <a
+          href={event.data.lumaUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-primary event-article__cta"
+        >
+          Register on Luma →
+        </a>
+      )}
     </header>
 
     <div class="hairline event-article__divider"></div>
