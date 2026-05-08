@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { partitionEvents, formatEventEyebrow, type EventLike } from './events';
+import {
+  partitionEvents,
+  formatEventEyebrow,
+  isEventPast,
+  isRegistrationClosed,
+  type EventLike,
+} from './events';
 
 const make = (id: string, date: string): EventLike => ({
   id,
@@ -52,6 +58,46 @@ describe('partitionEvents', () => {
     const { upcoming, past } = partitionEvents(events, today);
     expect(upcoming.map(e => e.id)).toEqual(['future2', 'future1']);
     expect(past.map(e => e.id)).toEqual(['past2', 'past1']);
+  });
+});
+
+describe('isEventPast', () => {
+  const today = new Date('2026-05-02T12:00:00Z');
+
+  it('returns false for an event later today', () => {
+    expect(isEventPast(new Date('2026-05-02T20:00:00Z'), today)).toBe(false);
+  });
+
+  it('returns true for an event yesterday', () => {
+    expect(isEventPast(new Date('2026-05-01'), today)).toBe(true);
+  });
+
+  it('returns false for a future event', () => {
+    expect(isEventPast(new Date('2026-06-01'), today)).toBe(false);
+  });
+});
+
+describe('isRegistrationClosed', () => {
+  const today = new Date('2026-05-02T12:00:00Z');
+
+  it('returns true when the event date is past', () => {
+    const event = { data: { date: new Date('2026-04-01') } };
+    expect(isRegistrationClosed(event, today)).toBe(true);
+  });
+
+  it('returns false when upcoming and registrationClosed is unset', () => {
+    const event = { data: { date: new Date('2026-06-01') } };
+    expect(isRegistrationClosed(event, today)).toBe(false);
+  });
+
+  it('returns false when upcoming and registrationClosed is false', () => {
+    const event = { data: { date: new Date('2026-06-01'), registrationClosed: false } };
+    expect(isRegistrationClosed(event, today)).toBe(false);
+  });
+
+  it('returns true when registrationClosed is true even if upcoming', () => {
+    const event = { data: { date: new Date('2026-06-01'), registrationClosed: true } };
+    expect(isRegistrationClosed(event, today)).toBe(true);
   });
 });
 

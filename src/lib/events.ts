@@ -31,6 +31,17 @@ export function partitionEvents<T extends EventLike>(
   return { upcoming, past };
 }
 
+export function isEventPast(date: Date, now: Date = new Date()): boolean {
+  return startOfDay(date) < startOfDay(now);
+}
+
+export function isRegistrationClosed(
+  event: { data: { date: Date; registrationClosed?: boolean } },
+  now: Date = new Date()
+): boolean {
+  return event.data.registrationClosed || isEventPast(event.data.date, now);
+}
+
 /**
  * Editorial eyebrow for an event row: "JUNE 15 · 5:30 PM" if a time is given,
  * otherwise "JUNE 15 · 2026". Year is shown only when no time is set, to keep
