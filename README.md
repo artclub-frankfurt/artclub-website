@@ -240,22 +240,36 @@ There's no separate database, no backend service we host, and no admin password 
 
 This needs to be done once by a repo admin (Theo or any organisation owner). Skip ahead to "Editor sign-in" if you're an editor (Tsering or anyone the admin invites).
 
+**A. Create the `content-edits` branch in the repo** (needed before Pages CMS can target it). One-liner from a local clone:
+
+```bash
+git checkout main && git pull
+git checkout -b content-edits
+git push -u origin content-edits
+```
+
+Or, on github.com: branches dropdown → type `content-edits` → "Create branch from main".
+
+**B. Add the project to Pages CMS:**
+
 1. Go to **<https://app.pagescms.org>** and click **Sign in with GitHub**.
 2. Authorize Pages CMS for the **`artclub-frankfurt`** GitHub organisation. When prompted to choose repository access, pick **Only select repositories** → check `artclub-website`. Don't grant access to all repos.
 3. After login, click **+ New project** in the dashboard.
 4. Pick **`artclub-frankfurt/artclub-website`** from the list of accessible repos.
-5. Pages CMS detects the `.pages.yml` config in the repo root and previews the editor structure. Confirm.
-6. Pages CMS will prompt you to choose the working branch. Select **`content-edits`** (this branch is created automatically on first save if it doesn't already exist).
-7. Done. The project now shows up on your dashboard and on the dashboard of anyone you grant access to.
+5. Pages CMS detects the `.pages.yml` config in the repo root and loads the editor.
+6. **Switch to the `content-edits` branch** using the dropdown in the **top-left** of the Pages CMS UI (next to your account / project name). Pages CMS reads `.pages.yml` per branch, so this switch determines both which branch your saves commit to and which version of the schema is shown.
 
-**Granting editor access:** Pages CMS uses GitHub repo permissions. Anyone added as a member of the `artclub-frankfurt` GitHub organisation with at least *Write* access to the `artclub-website` repo can sign into Pages CMS and edit. Add new editors via **GitHub org → People → Invite member** with the *Member* role.
+**C. Granting editor access:** Pages CMS uses GitHub repo permissions. Anyone added as a member of the `artclub-frankfurt` GitHub organisation with at least *Write* access to the `artclub-website` repo can sign into Pages CMS and edit. Add new editors via **GitHub org → People → Invite member** with the *Member* role.
+
+To prevent editors from accidentally committing directly to `main`, give them the *Member* role (not *Admin*) — branch protection on `main` will then refuse direct pushes from them, and the only working path is the `content-edits` branch + auto-PR flow.
 
 #### Editor sign-in (one-time, per person)
 
 1. Go to **<https://app.pagescms.org>** and click **Sign in with GitHub**.
 2. When GitHub asks which repos to grant access to, choose **Only select repositories** → pick `artclub-frankfurt/artclub-website`. (Don't grant access to all your repos.)
 3. The Art Club Frankfurt project should now appear in your dashboard. Click it.
-4. You should see a sidebar with **Events**, **Home page**, **About page**, **Contact page**.
+4. **First thing every session: check the branch dropdown in the top-left.** It should say **`content-edits`**. If it says `main` instead, click the dropdown and switch — saves on `main` would skip the PR review step. Pages CMS does not remember the branch between sessions reliably, so make this a habit.
+5. You should see a sidebar with **Events**, **Home page**, **About page**, **Contact page**.
 
 #### Add a new event
 

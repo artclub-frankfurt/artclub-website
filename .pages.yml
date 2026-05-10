@@ -1,16 +1,21 @@
 # Pages CMS configuration — defines the editor UI surfaced at app.pagescms.org.
 # See https://pagescms.org/docs/configuration.
 #
-# Workflow: Pages CMS commits saves to the `content-edits` branch (NOT main).
-# A GitHub Action (.github/workflows/cms-pr.yml) opens / updates a PR to main
-# on every push. The editor reviews the change on github.com and clicks
-# "Squash and merge". Branch protection on main still applies so this keeps
-# the same review-before-publish posture as code PRs.
+# Workflow: editors work on the `content-edits` branch (selected via the
+# branch dropdown in the top-left of the Pages CMS UI — Pages CMS does not
+# support setting a default working branch in this config file). A GitHub
+# Action (.github/workflows/cms-pr.yml) opens / updates a PR to main on every
+# push. The editor reviews the change on github.com and clicks "Squash and
+# merge". Branch protection on main still applies, so this keeps the same
+# review-before-publish posture as code PRs.
 
 settings:
-  # Pages CMS commits land on this branch. Long-lived; auto-PR'd to main.
-  branch: content-edits
-  commit_message_template: "{action} {entry.title || entry.filename}"
+  commit:
+    templates:
+      create: "Add {filename}"
+      update: "Update {filename}"
+      delete: "Delete {filename}"
+      rename: "Rename {filename} → {newFilename}"
 
 # Default upload location for any field that doesn't override `options.path`.
 # Per-field paths below override this when the image should sit alongside its .md.
