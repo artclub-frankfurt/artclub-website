@@ -1,0 +1,67 @@
+name: Open / update CMS pull request
+
+# Pages CMS commits saves to the `content-edits` branch. This workflow
+# automatically opens a PR from `content-edits` to `main` on every push,
+# or updates the existing PR if one is already open. The editor merges
+# the PR on github.com to publish.
+
+on:
+  push:
+    branches: [content-edits]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  open-or-update-pr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Open or update PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const head = 'content-edits';
+            const base = 'main';
+
+            const existing = await github.rest.pulls.list({
+              owner, repo, head: `${owner}:${head}`, base, state: 'open',
+            });
+
+            if (existing.data.length > 0) {
+              core.info(`PR already open: #${existing.data[0].number}`);
+              return;
+            }
+
+            const compare = await github.rest.repos.compareCommits({
+              owner, repo, base, head,
+            });
+            if (compare.data.commits.length === 0) {
+              core.info('content-edits has no commits ahead of main; skipping PR.');
+              return;
+            }
+
+            const commitMessages = compare.data.commits
+              .slice(-10)
+              .map(c => `- ${c.commit.message.split('\n')[0]}`)
+              .join('\n');
+
+            const pr = await github.rest.pulls.create({
+              owner, repo, base, head,
+              title: 'Content updates from Pages CMS',
+              body: [
+                'Auto-opened by `.github/workflows/cms-pr.yml` after a save in Pages CMS.',
+                '',
+                '## Changes in this batch',
+                commitMessages,
+                '',
+                'Review the **Files changed** tab and click **Squash and merge** to publish to the live site.',
+              ].join('\n'),
+            });
+            core.info(`Opened PR #${pr.data.number}: ${pr.data.html_url}`);
