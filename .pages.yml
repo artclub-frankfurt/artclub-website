@@ -1,0 +1,164 @@
+# Pages CMS configuration — defines the editor UI surfaced at app.pagescms.org.
+# See https://pagescms.org/docs/configuration.
+#
+# Workflow: Pages CMS commits saves to the `content-edits` branch (NOT main).
+# A GitHub Action (.github/workflows/cms-pr.yml) opens / updates a PR to main
+# on every push. The editor reviews the change on github.com and clicks
+# "Squash and merge". Branch protection on main still applies so this keeps
+# the same review-before-publish posture as code PRs.
+
+settings:
+  # Pages CMS commits land on this branch. Long-lived; auto-PR'd to main.
+  branch: content-edits
+  commit_message_template: "{action} {entry.title || entry.filename}"
+
+# Default upload location for any field that doesn't override `options.path`.
+# Per-field paths below override this when the image should sit alongside its .md.
+media:
+  - name: events_media
+    label: Event images
+    input: src/content/events
+    output: ./{filename}
+  - name: site_media
+    label: Site images
+    input: public/images
+    output: /images/{filename}
+
+content:
+  # ─────────────────────────────────────────────────────────────────────
+  # Events — the high-frequency editorial surface.
+  # ─────────────────────────────────────────────────────────────────────
+  - name: events
+    label: Events
+    type: collection
+    path: src/content/events
+    # Skip _TEMPLATE.md and any other underscore-prefixed reference files.
+    exclude: ["_*.md"]
+    # Auto-derive filename from date + title slug — matches the existing
+    # convention (`2026-09-15-autumn-mixer.md`).
+    filename: "{fields.date | date_format: 'yyyy-MM-dd'}-{fields.title | slugify}.md"
+    # Columns + sort in the events list view inside the CMS.
+    view:
+      fields: [title, date, time, registrationClosed]
+      primary: title
+      sort: [date]
+      default:
+        order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+
+      - name: date
+        label: Event date
+        type: date
+        required: true
+        # Pages CMS renders this as a calendar picker; "hello" can't be typed.
+
+      - name: time
+        label: Time
+        type: string
+        description: "Display time, e.g. '5:30 PM'. Optional — leave blank for date-only events."
+        # Loose type so the editor can write '5:30 PM', '17:30', 'Doors at 7 PM' etc.
+
+      - name: subtitle
+        label: Subtitle
+        type: string
+        description: "One-line venue/details, e.g. 'Frankfurt · Schirn Kunsthalle · Free for members'."
+
+      - name: lumaUrl
+        label: Luma URL
+        type: string
+        required: true
+        pattern:
+          regex: "^https://(lu\\.ma|luma\\.com)/.+"
+          message: "Must be a Luma event URL (https://lu.ma/... or https://luma.com/...)."
+
+      - name: registrationClosed
+        label: Registration closed
+        type: boolean
+        default: false
+        description: "Tick to manually close registration before the event date. After the event date, registration closes automatically regardless of this flag."
+
+      - name: coverImage
+        label: Cover image
+        type: image
+        description: "Optional. Drag-drop the event poster here. Goes alongside the .md."
+        options:
+          # Image lands in the same folder as the .md file.
+          input: src/content/events
+          path: src/content/events
+
+      - name: coverImageAlt
+        label: Cover image — alt text
+        type: string
+        description: "One sentence describing what the image shows (read by screen readers; not visible). Skip if the image is purely decorative."
+
+      - name: coverImageCredit
+        label: Cover image — credit
+        type: string
+        description: "Visible attribution shown below the image. Format: 'Artist, *Title*, Year. Photo: Source.'"
+
+      - name: instagramPosts
+        label: Instagram post URLs
+        type: string
+        list: true
+        description: "Add post URLs after the event happens — they render in the Photos grid on the event detail page."
+        pattern:
+          regex: "^https://(www\\.)?instagram\\.com/p/.+"
+          message: "Must be an Instagram post URL (https://www.instagram.com/p/…)."
+
+      - name: body
+        label: Description
+        type: rich-text
+        description: "The event's full description. Use the toolbar for bold, italic, headings, lists, links."
+
+  # ─────────────────────────────────────────────────────────────────────
+  # Site pages — three named markdown files. Lower frequency edits.
+  # ─────────────────────────────────────────────────────────────────────
+  - name: home_page
+    label: Home page
+    type: file
+    path: src/content/site/home.md
+    fields:
+      - name: title
+        label: Page title (browser tab)
+        type: string
+      - name: heroTitle
+        label: Hero — main line
+        type: string
+        description: "Big serif text overlaid on the campus photo."
+      - name: heroSubtitle
+        label: Hero — subtitle
+        type: string
+        description: "Italic line below the hero title."
+      - name: body
+        label: About card body
+        type: rich-text
+        description: "Short intro shown between the hero and the upcoming event. 1–3 sentences."
+
+  - name: about_page
+    label: About page
+    type: file
+    path: src/content/site/about.md
+    fields:
+      - name: title
+        label: Page title (browser tab)
+        type: string
+      - name: body
+        label: About page body
+        type: rich-text
+
+  - name: contact_page
+    label: Contact page
+    type: file
+    path: src/content/site/contact.md
+    fields:
+      - name: title
+        label: Page title (browser tab)
+        type: string
+      - name: body
+        label: Contact page body
+        type: rich-text
+        description: "Optional intro paragraph. Email and Instagram blocks render automatically below."

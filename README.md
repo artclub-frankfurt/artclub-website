@@ -224,9 +224,83 @@ Vercel dashboard → project → **Deployments** → click any prior deployment 
 
 ## 6. Content editing guide (for non-devs)
 
-All content is edited on github.com. You don't need to install anything.
+The recommended way to edit content is **Pages CMS** — a free web editor that gives you forms instead of raw markdown, drag-drop image upload, and a calendar picker for dates. It commits your changes to a staging branch and opens a pull request automatically; you click **Merge** when you're happy and the live site updates within ~2 minutes.
 
-### Edit an existing page
+Editing directly on github.com still works for emergency fixes — that's covered after the Pages CMS section.
+
+### 6.1 Editing via Pages CMS (recommended)
+
+#### What is Pages CMS
+
+[Pages CMS](https://pagescms.org) is a free open-source web editor for content stored in a GitHub repo. It reads our schema (the `.pages.yml` file at the repo root) and renders a form-based editor: form fields instead of YAML, a calendar picker for the date, drag-drop image upload, a WYSIWYG body editor, validation before save.
+
+There's no separate database, no backend service we host, and no admin password to manage. Pages CMS authenticates each editor with their personal GitHub account; their saves are normal git commits to the repo authored by them. If Pages CMS ever disappeared, the repo would still be there, content unchanged, and editing would fall back to github.com directly (§6.2 below).
+
+#### Project setup in Pages CMS (one-time, admin)
+
+This needs to be done once by a repo admin (Theo or any organisation owner). Skip ahead to "Editor sign-in" if you're an editor (Tsering or anyone the admin invites).
+
+1. Go to **<https://app.pagescms.org>** and click **Sign in with GitHub**.
+2. Authorize Pages CMS for the **`artclub-frankfurt`** GitHub organisation. When prompted to choose repository access, pick **Only select repositories** → check `artclub-website`. Don't grant access to all repos.
+3. After login, click **+ New project** in the dashboard.
+4. Pick **`artclub-frankfurt/artclub-website`** from the list of accessible repos.
+5. Pages CMS detects the `.pages.yml` config in the repo root and previews the editor structure. Confirm.
+6. Pages CMS will prompt you to choose the working branch. Select **`content-edits`** (this branch is created automatically on first save if it doesn't already exist).
+7. Done. The project now shows up on your dashboard and on the dashboard of anyone you grant access to.
+
+**Granting editor access:** Pages CMS uses GitHub repo permissions. Anyone added as a member of the `artclub-frankfurt` GitHub organisation with at least *Write* access to the `artclub-website` repo can sign into Pages CMS and edit. Add new editors via **GitHub org → People → Invite member** with the *Member* role.
+
+#### Editor sign-in (one-time, per person)
+
+1. Go to **<https://app.pagescms.org>** and click **Sign in with GitHub**.
+2. When GitHub asks which repos to grant access to, choose **Only select repositories** → pick `artclub-frankfurt/artclub-website`. (Don't grant access to all your repos.)
+3. The Art Club Frankfurt project should now appear in your dashboard. Click it.
+4. You should see a sidebar with **Events**, **Home page**, **About page**, **Contact page**.
+
+#### Add a new event
+
+1. In the left sidebar, click **Events** → **+ New entry**.
+2. Fill in the form:
+   - **Title** — the event name.
+   - **Event date** — pick a date from the calendar (you can't type "hello" here; only valid dates are accepted).
+   - **Time** — display time like `5:30 PM`. Optional. Leave blank for date-only events.
+   - **Subtitle** — one line, e.g. `Frankfurt · Schirn Kunsthalle · Free for members`. Optional.
+   - **Luma URL** — paste the registration URL from Luma (must start with `https://lu.ma/...` or `https://luma.com/...` — Pages CMS will refuse other URLs).
+   - **Registration closed** — leave unchecked unless you want to manually close registration before the event date.
+   - **Cover image** — drag the event poster onto the upload area. Pages CMS handles the file naming and placement.
+   - **Cover image — alt text** — one sentence describing what the image shows. Read by screen readers; not visible. Skip if the image is decorative.
+   - **Cover image — credit** — visible attribution. Format: `Artist, *Title*, Year. Photo: Source.`
+   - **Instagram post URLs** — leave empty until after the event happens, then add the URLs of the photo posts.
+   - **Description** — the body of the event page. Use the toolbar (B, I, headings, bullet list) — no need to remember markdown syntax.
+3. Click **Save**.
+4. A pull request will be opened automatically (or updated, if one already exists). You'll see a link to it.
+5. Open the PR on github.com. Glance at the **Files changed** tab to confirm everything looks right. Click **Squash and merge** → confirm.
+6. The site updates within 1–2 minutes. Refresh `https://artclub-frankfurt.de/events/`.
+
+The event filename, the URL slug, the image upload path, the YAML frontmatter — all auto-generated from your form input. You don't see any of it.
+
+#### Edit an existing event or page
+
+Same flow: pick the entry in the sidebar, edit the fields, click **Save**, merge the auto-PR.
+
+#### Closing registration before an event
+
+Open the event in Pages CMS → tick **Registration closed** → Save → merge the PR. The "Register on Luma" button on that event becomes a greyed-out "Registration closed".
+
+#### What happens behind the scenes
+
+- Pages CMS commits your save to a long-lived branch called `content-edits` (NOT `main`).
+- A GitHub Action sees the push and either opens a new PR `content-edits → main`, or updates the existing one if a PR is already in flight.
+- Once you merge, the deploy workflow runs `pnpm test` then deploys to Vercel.
+- The `content-edits` branch is reset to match `main` after merge (auto, by GitHub).
+
+This means: **nothing you do in Pages CMS goes live until you click Merge on the PR.** If you save something by mistake, you can fix it (or close the PR without merging) before the live site sees it.
+
+### 6.2 Editing directly on github.com (emergency fallback)
+
+If Pages CMS is down or you need to fix something faster than logging in, you can still edit markdown files directly on github.com. This commits straight to `main` and bypasses the PR review step — use it sparingly.
+
+#### Edit an existing page
 
 1. Go to the repo on github.com.
 2. Click into `src/content/site/` → click the file you want to edit (e.g. `about.md`).
@@ -235,7 +309,7 @@ All content is edited on github.com. You don't need to install anything.
 5. Scroll to the bottom → "Commit changes…" → write a short message → "Commit changes".
 6. Wait ~30 seconds, then refresh the live site.
 
-### Add a new event
+#### Add a new event
 
 A copy-pasteable starter template lives at [`src/content/events/_TEMPLATE.md`](src/content/events/_TEMPLATE.md). The leading underscore tells Astro to skip it during the build, so it's there purely as a reference you can copy from.
 
@@ -261,7 +335,7 @@ The event appears on the site within ~30 seconds.
 - With `time` set: `MAY 6 · 7:00 PM`
 - Without `time`: `MAY 6 · 2026`
 
-### Add an event poster (cover image)
+#### Add an event poster (cover image)
 
 The poster shows as a small thumbnail on the `/events` listing and as the full-width header image on the event's own page. It's optional — events without a poster render in text-only style, which is fine.
 
@@ -296,7 +370,7 @@ coverImageCredit: "Cy Twombly, Untitled (Bacchus), 2008. Photo: Schirn Kunsthall
 
 Both are optional; leave the line out if you don't have it.
 
-### Add post-event photos
+#### Add post-event photos
 
 1. After the event, post the photos to Instagram as usual.
 2. For each photo (or carousel), copy its Instagram URL (e.g. `https://www.instagram.com/p/ABCDE/`).
@@ -309,7 +383,7 @@ Both are optional; leave the line out if you don't have it.
    ```
 5. Commit. Photos appear on the event detail page within ~30 seconds.
 
-### Change site config
+#### Change site config
 
 `src/data/site.json` holds site-wide settings: email, social links, Google Form URL, behold widget ID. Edit on github.com the same way.
 
