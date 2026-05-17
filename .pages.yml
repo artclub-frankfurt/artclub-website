@@ -20,14 +20,17 @@ settings:
 # Default upload location for any field that doesn't override `options.path`.
 # Per-field paths below override this when the image should sit alongside its .md.
 media:
+  # `output` is a literal path prefix — Pages CMS appends `/<filename>` itself.
+  # Do NOT use `{filename}` here; it isn't substituted in this position and
+  # gets written into content as a literal token (the CI break in #14/#15).
   - name: events_media
     label: Event images
     input: src/content/events
-    output: ./{filename}
+    output: "."
   - name: site_media
     label: Site images
     input: public/images
-    output: /images/{filename}
+    output: /images
 
 content:
   # ─────────────────────────────────────────────────────────────────────
