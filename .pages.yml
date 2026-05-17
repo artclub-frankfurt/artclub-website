@@ -76,10 +76,11 @@ content:
       - name: lumaUrl
         label: Luma URL
         type: string
-        required: true
+        description: "Optional. Leave blank to publish the event without a Register CTA."
+        # Regex accepts empty OR a Luma URL, so unsetting the field passes validation.
         pattern:
-          regex: "^https://(lu\\.ma|luma\\.com)/.+"
-          message: "Must be a Luma event URL (https://lu.ma/... or https://luma.com/...)."
+          regex: "^(https://(lu\\.ma|luma\\.com)/.+)?$"
+          message: "Must be a Luma event URL (https://lu.ma/... or https://luma.com/...) or empty."
 
       - name: registrationClosed
         label: Registration closed

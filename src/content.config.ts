@@ -8,7 +8,7 @@ const events = defineCollection({
     date: z.coerce.date(),
     time: z.string().optional(),
     subtitle: z.string().optional(),
-    lumaUrl: z.string().url(),
+    lumaUrl: z.string().url().optional(),
     registrationClosed: z.boolean().optional().default(false),
     coverImage: image().optional(),
     coverImageAlt: z.string().optional(),
