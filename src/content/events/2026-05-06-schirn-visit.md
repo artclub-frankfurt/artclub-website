@@ -1,5 +1,5 @@
 ---
-title: SCHIRN VISIT
+title: Schirn Visit
 date: 2026-05-06
 time: 5.30 PM
 subtitle: Solo Exhibition Thomas Bayrle
