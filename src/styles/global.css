@@ -169,7 +169,6 @@
   .markdown-prose > :last-child { margin-bottom: 0; }
 
   .markdown-prose p {
-    font-family: var(--font-serif);
     font-size: 1rem;
     line-height: 1.7;
     margin: 0 0 1.35em;
@@ -195,7 +194,6 @@
 
   .markdown-prose ul,
   .markdown-prose ol {
-    font-family: var(--font-serif);
     font-size: 1rem;
     line-height: 1.7;
     margin: 0 0 1.35em;
@@ -210,12 +208,14 @@
     color: var(--color-burgundy);
     text-decoration: underline;
     text-decoration-thickness: 1px;
-    text-underline-offset: 2px;
+    /* 3px clears Times descenders (g/j/p/q/y); 2px clipped them. */
+    text-underline-offset: 3px;
     transition: color 150ms ease;
   }
   .markdown-prose a:hover { color: var(--color-burgundy-deep); }
 
-  .markdown-prose strong { font-weight: 600; }
+  /* 700 = real Times Bold cut. 600 would synthesize a faux-bold weight. */
+  .markdown-prose strong { font-weight: 700; }
   .markdown-prose em { font-style: italic; }
 
   .markdown-prose blockquote {
