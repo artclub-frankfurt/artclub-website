@@ -1,0 +1,91 @@
+name: Lint content
+
+# Catches NEW event files whose filenames don't match the canonical
+# YYYY-MM-DD-slug.md pattern — usually the symptom of Pages CMS having
+# evaluated its filename template against empty title/date fields at
+# create time and frozen the result as '-.md'. Failing the PR here
+# prevents the cursed filename from ever reaching main; the editor's
+# fix is to delete the event in the CMS and re-create it with title
+# and date filled in BEFORE saving.
+#
+# Scope note: this lint only fires on files newly *added* in the PR.
+# Pre-existing bad filenames on main are grandfathered (they'll be
+# cleaned up manually when the event gets a real name). Modifying
+# the content of a grandfathered bad-filename event is NOT blocked.
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  event-filenames:
+    name: New event filenames match YYYY-MM-DD-slug.md
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate event filenames added by this PR
+        shell: bash
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          set -euo pipefail
+
+          git fetch --no-tags --depth=1 origin "$BASE_REF"
+
+          # Only files this PR ADDS under src/content/events/*.md.
+          # Modifications and pre-existing files are out of scope.
+          mapfile -t added < <(
+            git diff --name-only --diff-filter=A \
+              "origin/$BASE_REF...HEAD" \
+              -- 'src/content/events/*.md'
+          )
+
+          if (( ${#added[@]} == 0 )); then
+            echo "No new event files in this PR."
+            exit 0
+          fi
+
+          bad=()
+          for f in "${added[@]}"; do
+            name=$(basename "$f")
+            # Files starting with `_` are excluded from the events
+            # collection by the glob in src/content.config.ts; allow
+            # them through here too (templates, drafts, etc.).
+            [[ "$name" == _* ]] && continue
+            if [[ ! "$name" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9-]+\.md$ ]]; then
+              bad+=("$f")
+            fi
+          done
+
+          if (( ${#bad[@]} > 0 )); then
+            for f in "${bad[@]}"; do
+              echo "::error file=$f,title=Bad event filename::Filename must match YYYY-MM-DD-slug.md"
+            done
+            cat <<'EOF'
+
+          One or more event files added by this PR have filenames that
+          do not match YYYY-MM-DD-slug.md.
+
+          This is usually a Pages CMS artifact: events created with
+          empty title or date fields end up with filenames like '-.md'
+          because Pages CMS evaluates the filename template once at
+          create time and never re-evaluates it.
+
+          To fix:
+            1. In Pages CMS, DELETE the offending event.
+            2. Re-create it, filling in BOTH the title and the date
+               BEFORE clicking save the first time. The new filename
+               will be derived correctly.
+          EOF
+            exit 1
+          fi
+
+          printf 'OK — new event file(s) have valid filenames:\n'
+          printf '  %s\n' "${added[@]}"
