@@ -65,18 +65,21 @@ content:
       - name: time
         label: Time
         type: string
-        description: "Display time, e.g. '5:30 PM'. Optional — leave blank for date-only events."
+        required: false
+        description: "Optional. Display time, e.g. '5:30 PM'. Leave blank for date-only events."
         # Loose type so the editor can write '5:30 PM', '17:30', 'Doors at 7 PM' etc.
 
       - name: subtitle
         label: Subtitle
         type: string
-        description: "One-line venue/details, e.g. 'Frankfurt · Schirn Kunsthalle · Free for members'."
+        required: false
+        description: "Optional. One-line venue/details, e.g. 'Frankfurt · Schirn Kunsthalle · Free for members'."
 
       - name: lumaUrl
         label: Luma URL
         type: string
-        description: "Optional. Leave blank to publish the event without a Register CTA."
+        required: false
+        description: "Optional. Leave blank to publish the event without a Register CTA. Paste the real Luma URL later when registration is ready and the button appears automatically."
         # Regex accepts empty OR a Luma URL, so unsetting the field passes validation.
         pattern:
           regex: "^(https://(lu\\.ma|luma\\.com)/.+)?$"
@@ -85,33 +88,40 @@ content:
       - name: registrationClosed
         label: Registration closed
         type: boolean
+        required: false
         default: false
         description: "Tick to manually close registration before the event date. After the event date, registration closes automatically regardless of this flag."
 
       - name: coverImage
         label: Cover image
         type: image
+        required: false
         description: "Optional. Drag-drop the event poster here. Goes alongside the .md."
         options:
-          # Image lands in the same folder as the .md file.
-          input: src/content/events
+          # `path` = the folder Pages CMS opens when browsing existing images.
+          # The actual upload destination is determined by the events_media
+          # entry at the top of this file.
           path: src/content/events
+          extensions: [jpg, jpeg, png, webp]
 
       - name: coverImageAlt
         label: Cover image — alt text
         type: string
-        description: "One sentence describing what the image shows (read by screen readers; not visible). Skip if the image is purely decorative."
+        required: false
+        description: "Optional. One sentence describing what the image shows (read by screen readers; not visible). Skip if the image is purely decorative."
 
       - name: coverImageCredit
         label: Cover image — credit
         type: string
-        description: "Visible attribution shown below the image. Format: 'Artist, *Title*, Year. Photo: Source.'"
+        required: false
+        description: "Optional. Visible attribution shown below the image. Format: 'Artist, *Title*, Year. Photo: Source.'"
 
       - name: instagramPosts
         label: Instagram post URLs
         type: string
         list: true
-        description: "Add post URLs after the event happens — they render in the Photos grid on the event detail page."
+        required: false
+        description: "Optional. Add post URLs after the event happens — they render in the Photos grid on the event detail page."
         pattern:
           regex: "^https://(www\\.)?instagram\\.com/p/.+"
           message: "Must be an Instagram post URL (https://www.instagram.com/p/…)."
@@ -119,7 +129,8 @@ content:
       - name: body
         label: Description
         type: rich-text
-        description: "The event's full description. Use the toolbar for bold, italic, headings, lists, links."
+        required: false
+        description: "Optional. The event's full description. Use the toolbar for bold, italic, headings, lists, links."
 
   # ─────────────────────────────────────────────────────────────────────
   # Site pages — three named markdown files. Lower frequency edits.
@@ -132,17 +143,22 @@ content:
       - name: title
         label: Page title (browser tab)
         type: string
+        required: false
+        description: "Optional. Overrides the default 'Art Club Frankfurt' browser-tab title."
       - name: heroTitle
         label: Hero — main line
         type: string
+        required: false
         description: "Big serif text overlaid on the campus photo."
       - name: heroSubtitle
         label: Hero — subtitle
         type: string
+        required: false
         description: "Italic line below the hero title."
       - name: body
         label: About card body
         type: rich-text
+        required: false
         description: "Short intro shown between the hero and the upcoming event. 1–3 sentences."
 
   - name: about_page
@@ -153,9 +169,13 @@ content:
       - name: title
         label: Page title (browser tab)
         type: string
+        required: false
+        description: "Optional. Overrides the default browser-tab title."
       - name: body
         label: About page body
         type: rich-text
+        required: false
+        description: "The page content. Headings + paragraphs render with the editorial type system."
 
   - name: contact_page
     label: Contact page
@@ -165,7 +185,10 @@ content:
       - name: title
         label: Page title (browser tab)
         type: string
+        required: false
+        description: "Optional. Overrides the default browser-tab title."
       - name: body
         label: Contact page body
         type: rich-text
+        required: false
         description: "Optional intro paragraph. Email and Instagram blocks render automatically below."
