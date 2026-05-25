@@ -37,7 +37,7 @@ const registrationClosed = next ? isRegistrationClosed(next) : false;
         <div class="featured-event__ctas">
           {registrationClosed ? (
             <span class="btn-disabled" aria-disabled="true">Registration closed</span>
-          ) : (
+          ) : next.data.lumaUrl ? (
             <a
               href={next.data.lumaUrl}
               target="_blank"
@@ -46,7 +46,7 @@ const registrationClosed = next ? isRegistrationClosed(next) : false;
             >
               Register on Luma
             </a>
-          )}
+          ) : null}
           <a href="/events" class="link-chrome">See all events →</a>
         </div>
       </>
