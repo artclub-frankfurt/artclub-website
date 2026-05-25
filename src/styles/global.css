@@ -155,10 +155,11 @@
     border-top: 1px solid var(--color-hairline);
   }
 
-  /* Editorial markdown body. Headings stay in serif; reading body
-   * (paragraphs, lists, blockquote) is set in the system sans stack
-   * for screen-readability. Per-page typography overrides go in the
-   * page's scoped style block.
+  /* Editorial markdown body. Everything — headings, paragraphs, lists,
+   * blockquote — is set in the serif stack for an editorial / gallery
+   * tone. Site chrome (nav, eyebrows, buttons, footer links) is the
+   * only thing still in the sans stack. Per-page typography overrides
+   * go in the page's scoped style block.
    */
   .markdown-prose {
     font-family: var(--font-serif);
@@ -168,7 +169,7 @@
   .markdown-prose > :last-child { margin-bottom: 0; }
 
   .markdown-prose p {
-    font-family: var(--font-sans);
+    font-family: var(--font-serif);
     font-size: 1rem;
     line-height: 1.7;
     margin: 0 0 1.35em;
@@ -194,7 +195,7 @@
 
   .markdown-prose ul,
   .markdown-prose ol {
-    font-family: var(--font-sans);
+    font-family: var(--font-serif);
     font-size: 1rem;
     line-height: 1.7;
     margin: 0 0 1.35em;
