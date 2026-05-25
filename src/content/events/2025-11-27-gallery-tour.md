@@ -1,5 +1,5 @@
 ---
-title: GALLERY TOUR
+title: Gallery Tour
 date: 2025-11-27
 time: 4 – 6 PM
 lumaUrl: https://luma.com/nk0ec7lx
