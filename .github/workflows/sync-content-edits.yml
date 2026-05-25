@@ -1,0 +1,98 @@
+name: Sync content-edits with main
+
+# Keeps the content-edits branch aligned with main automatically — no
+# more manual `git push --force-with-lease origin main:content-edits`
+# after each merge.
+#
+# Two trigger flows:
+#
+# 1. A pull request from content-edits → main just merged. The editor's
+#    individual commits are now squashed into a single commit on main;
+#    content-edits still has the originals as "phantom" commits whose
+#    content is already on main. Force-reset content-edits to main HEAD
+#    so the next CMS save starts from a clean base (no ghost PRs).
+#
+# 2. A push to main landed (typically a code PR squash-merging).
+#    content-edits may now be missing config / schema changes — e.g. an
+#    updated .pages.yml or src/content.config.ts — and Pages CMS would
+#    show stale validation rules until that drift is fixed. If
+#    content-edits has no divergent commits, fast-forward it to main.
+#    If it does have divergent commits (a CMS save in flight), skip:
+#    the cms-pr workflow will produce a PR for that save, and once that
+#    PR merges flow (1) takes over and resets content-edits cleanly.
+#
+# Recursion: pushes to content-edits made by GITHUB_TOKEN as
+# github-actions[bot] do NOT trigger other workflows, so cms-pr.yml
+# does not re-fire from this workflow's pushes.
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  align:
+    name: Align content-edits to main
+    # Only run on push events, OR on PR events where the PR actually
+    # merged and came from the content-edits branch. Closing a PR
+    # without merging should not realign anything.
+    if: |
+      github.event_name == 'push' ||
+      (github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'content-edits')
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Align content-edits to main
+        env:
+          IS_CMS_MERGE: ${{ github.event_name == 'pull_request' }}
+        run: |
+          set -euo pipefail
+
+          git fetch --no-tags origin main content-edits
+
+          MAIN_TIP="$(git rev-parse origin/main)"
+          CE_TIP="$(git rev-parse origin/content-edits)"
+
+          if [[ "$MAIN_TIP" == "$CE_TIP" ]]; then
+            echo "content-edits is already at main ($MAIN_TIP); nothing to do."
+            exit 0
+          fi
+
+          if [[ "$IS_CMS_MERGE" == "true" ]]; then
+            echo "CMS PR merged → resetting content-edits to main."
+            echo "  before: content-edits = $CE_TIP"
+            echo "  after:  content-edits = $MAIN_TIP"
+            # --force-with-lease protects against a concurrent CMS save
+            # racing with this workflow. If the editor pushed between
+            # our fetch and our push, the lease check fails and the push
+            # is rejected — which is the right outcome: better to error
+            # than to overwrite a save we haven't seen.
+            git push --force-with-lease="content-edits:$CE_TIP" \
+              origin "$MAIN_TIP:content-edits"
+            exit 0
+          fi
+
+          # push-to-main path
+          if git merge-base --is-ancestor "$CE_TIP" "$MAIN_TIP"; then
+            echo "content-edits is strictly behind main → fast-forwarding."
+            echo "  before: content-edits = $CE_TIP"
+            echo "  after:  content-edits = $MAIN_TIP"
+            git push origin "$MAIN_TIP:content-edits"
+          else
+            echo "content-edits has commits not on main (CMS save in flight); skipping."
+            echo "  content-edits = $CE_TIP"
+            echo "  main          = $MAIN_TIP"
+            echo "The cms-pr workflow will open a PR for the in-flight commits."
+            echo "Once that PR merges, this workflow runs again and aligns."
+          fi
