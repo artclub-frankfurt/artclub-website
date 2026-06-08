@@ -4,7 +4,7 @@ date: 2025-11-27
 time: 4 – 6 PM
 lumaUrl: https://luma.com/nk0ec7lx
 registrationClosed: true
-coverImage: Insta Post 1.1 - Gallery Tour 27.11.25.png
+coverImage: 2025-11-27-gallery-tour.png
 coverImageAlt: Gallery Tour Flyer from Art Club Event November 27
 ---
 We are delighted to announce our very first event, a gallery tour on Thursday, November 27!

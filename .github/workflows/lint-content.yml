@@ -1,10 +1,13 @@
 name: Lint content
 
-# Catches NEW event files whose filenames don't match the canonical
-# YYYY-MM-DD-slug.md pattern — usually the symptom of Pages CMS having
-# evaluated its filename template against empty title/date fields at
-# create time and frozen the result as '-.md' (or '--1.md', '--2.md',
-# … if it had to dedupe against existing bad filenames).
+# Defence-in-depth safety net: catches NEW event files whose filenames
+# don't match the canonical YYYY-MM-DD-slug.md pattern. The original
+# cause of '-.md' (and the '--1.md'/'--2.md' dedupe ladder) was a broken
+# `filename` template in .pages.yml that used `| date_format` / `| slugify`
+# filters. Pages CMS has no filter syntax, so it looked those up as field
+# names, found nothing, and collapsed the template to '-.md'. That root
+# cause is fixed (filename: "{fields.date}-{fields.title}.md"); this lint
+# stays as a cheap guard against any future filename regression.
 #
 # Trigger note: we fire on `push: content-edits` and `push: main`, NOT
 # (only) on `pull_request`. The cms-pr workflow opens PRs via
@@ -88,17 +91,15 @@ jobs:
           One or more event files added in this change have filenames
           that do not match YYYY-MM-DD-slug.md.
 
-          This is usually a Pages CMS artifact: events created with
-          empty title or date fields end up with filenames like '-.md'
-          (or '--1.md', '--2.md', …) because Pages CMS evaluates the
-          filename template once at create time, before the editor
-          fills the form, and never re-evaluates it on update.
+          This usually means the .pages.yml `filename` template is
+          malformed — e.g. using unsupported `| filter` syntax, which
+          Pages CMS resolves to an empty string and collapses to '-.md'.
+          The canonical template is "{fields.date}-{fields.title}.md".
 
-          To fix:
-            1. In Pages CMS, DELETE the offending event.
-            2. Re-create it, filling in BOTH the title and the date
-               BEFORE clicking save the first time. The new filename
-               will be derived correctly.
+          If the template is correct, the offending event was saved with
+          an empty title or date. To fix in Pages CMS:
+            1. DELETE the offending event.
+            2. Re-create it with the title and date filled in, then save.
           EOF
             exit 1
           fi
