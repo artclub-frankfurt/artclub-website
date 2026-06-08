@@ -89,8 +89,13 @@ const registrationClosed = isRegistrationClosed(event);
   }
 
   .event-article__cover-img {
-    width: 100%;
-    height: auto;
+    /* Fixed, constant height across all event pages; width follows the
+       image's own aspect ratio (no cropping). max-width keeps an unusually
+       wide/landscape flyer from overflowing the 720px article column. */
+    height: 440px;
+    width: auto;
+    max-width: 100%;
+    margin: 0 auto;
     display: block;
   }
 
@@ -148,6 +153,9 @@ const registrationClosed = isRegistrationClosed(event);
     }
     .event-article__title {
       font-size: 2.25rem;
+    }
+    .event-article__cover-img {
+      height: 300px;
     }
   }
 </style>
