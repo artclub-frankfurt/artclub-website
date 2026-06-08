@@ -19,13 +19,13 @@ We look forward to spending the evening with you and to engaging conversations a
 
 
 
-### Registration
+## Registration
 
 Participation in both the guided tour and the workshop is free for everyone. As places are limited, registration via Luma is required. 
 
 
 
-### Meeting point
+## Meeting point
 
 KUNSTSTIFTUNG DZ Bank  
 Exhibition Hall  
