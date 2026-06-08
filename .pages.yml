@@ -23,14 +23,21 @@ media:
   # `output` is a literal path prefix — Pages CMS appends `/<filename>` itself.
   # Do NOT use `{filename}` here; it isn't substituted in this position and
   # gets written into content as a literal token (the CI break in #14/#15).
+  #
+  # `rename: safe` slugifies every uploaded filename (lowercase, strip
+  # spaces & special chars, lowercase the extension). Editors can drop in
+  # "My Flyer.JPEG" and the repo gets "my-flyer.jpeg" — no spaces or caps
+  # in committed asset names.
   - name: events_media
     label: Event images
     input: src/content/events
     output: "."
+    rename: safe
   - name: site_media
     label: Site images
     input: public/images
     output: /images
+    rename: safe
 
 content:
   # ─────────────────────────────────────────────────────────────────────
@@ -40,9 +47,17 @@ content:
     label: Events
     type: collection
     path: src/content/events
-    # Auto-derive filename from date + title slug — matches the existing
-    # convention (`2026-09-15-autumn-mixer.md`).
-    filename: "{fields.date | date_format: 'yyyy-MM-dd'}-{fields.title | slugify}.md"
+    # Auto-derive filename from the event date + title, e.g.
+    # `2026-09-15-autumn-mixer.md`.
+    #
+    # Pages CMS has NO pipe/filter syntax: it treats everything inside
+    # `{...}` as a field name and ALREADY slugifies every value (lowercase,
+    # strict). A `date` field is stored as `yyyy-MM-dd`, so `{fields.date}`
+    # is already in the right shape. The previous `{... | date_format}` /
+    # `{... | slugify}` form made it look up fields literally named
+    # "date | date_format: ..." and "title | slugify", which don't exist —
+    # both resolved to empty and collapsed the whole template to `-.md`.
+    filename: "{fields.date}-{fields.title}.md"
     # Columns + sort in the events list view inside the CMS.
     view:
       fields: [title, date, time, registrationClosed]
