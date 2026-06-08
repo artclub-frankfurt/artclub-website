@@ -6,6 +6,10 @@ lumaUrl: https://luma.com/nk0ec7lx
 registrationClosed: true
 coverImage: 2025-11-27-gallery-tour.png
 coverImageAlt: Gallery Tour Flyer from Art Club Event November 27
+instagramPosts:
+  - https://www.instagram.com/p/DRZnSM-CB2y/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
+  - https://www.instagram.com/p/DRiSBKNiLOZ/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
+  - https://www.instagram.com/p/DXohCYSCAv_/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
 ---
 We are delighted to announce our very first event, a gallery tour on Thursday, November 27!
 

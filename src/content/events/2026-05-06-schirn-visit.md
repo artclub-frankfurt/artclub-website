@@ -9,7 +9,10 @@ coverImage: 2026-05-06-schirn-visit.jpg
 coverImageAlt: A tessellated portrait of Kim Kardashian rendered in red and
   black on a white background, composed of small repeating undulating shapes
   that resolve into a face when viewed at a distance.
-coverImageCredit: "Thomas Bayrle, Kim Kardashian XII, 2021. Photo: Wolfgang Günzel."
+coverImageCredit: "Thomas Bayrle, Kim Kardashian XII, 2021. Photo credit: Wolfgang Günzel"
+instagramPosts:
+  - https://www.instagram.com/p/DXpq-0ViJR7/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
+  - https://www.instagram.com/p/DYfMWQdCJ4w/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
 ---
 We are visiting the SCHIRN KUNSTHALLE together on Wednesday, May 6, for a guided tour of Thomas Bayrle's current solo exhibition. We will meet at 5.30 PM in front of the SCHIRN entrance, and the tour will last until 7 PM. After the tour we will continue at Café KoZ.
 
