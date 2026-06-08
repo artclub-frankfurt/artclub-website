@@ -3,19 +3,31 @@ name: Lint content
 # Catches NEW event files whose filenames don't match the canonical
 # YYYY-MM-DD-slug.md pattern — usually the symptom of Pages CMS having
 # evaluated its filename template against empty title/date fields at
-# create time and frozen the result as '-.md'. Failing the PR here
-# prevents the cursed filename from ever reaching main; the editor's
-# fix is to delete the event in the CMS and re-create it with title
-# and date filled in BEFORE saving.
+# create time and frozen the result as '-.md' (or '--1.md', '--2.md',
+# … if it had to dedupe against existing bad filenames).
 #
-# Scope note: this lint only fires on files newly *added* in the PR.
-# Pre-existing bad filenames on main are grandfathered (they'll be
-# cleaned up manually when the event gets a real name). Modifying
-# the content of a grandfathered bad-filename event is NOT blocked.
+# Trigger note: we fire on `push: content-edits` and `push: main`, NOT
+# (only) on `pull_request`. The cms-pr workflow opens PRs via
+# GITHUB_TOKEN as github-actions[bot], and GitHub's anti-recursion
+# guard means those PR events don't trigger other workflows. Tsering's
+# direct push to content-edits IS a real user push and DOES trigger
+# this workflow, and the resulting check status lands on the same
+# commit SHA the auto-opened PR's head points at — so the PR shows
+# the failure even though we never ran on the PR event itself.
+#
+# We also keep the `pull_request` trigger for human-opened PRs to main
+# (e.g. code PRs that touch content files for any reason).
+#
+# Scope note: this lint only fires on files newly *added* in the diff.
+# Pre-existing bad filenames are grandfathered (they'll be cleaned up
+# manually when the event gets a real name). Modifying the content of
+# a grandfathered bad-filename event is NOT blocked.
 
 on:
   pull_request:
     branches: [main]
+  push:
+    branches: [main, content-edits]
   workflow_dispatch: {}
 
 jobs:
@@ -30,17 +42,20 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Validate event filenames added by this PR
+      - name: Validate event filenames added in this change
         shell: bash
+        # On `pull_request`, github.base_ref is the target branch.
+        # On `push`, base_ref is empty — diff against main instead.
         env:
-          BASE_REF: ${{ github.base_ref }}
+          BASE_REF: ${{ github.base_ref || 'main' }}
         run: |
           set -euo pipefail
 
           git fetch --no-tags --depth=1 origin "$BASE_REF"
 
-          # Only files this PR ADDS under src/content/events/*.md.
-          # Modifications and pre-existing files are out of scope.
+          # Files newly ADDED relative to the base branch.
+          # Modifications and pre-existing files are out of scope so
+          # this lint doesn't punish unrelated PRs for legacy debt.
           mapfile -t added < <(
             git diff --name-only --diff-filter=A \
               "origin/$BASE_REF...HEAD" \
@@ -48,7 +63,7 @@ jobs:
           )
 
           if (( ${#added[@]} == 0 )); then
-            echo "No new event files in this PR."
+            echo "No new event files in this change."
             exit 0
           fi
 
@@ -70,13 +85,14 @@ jobs:
             done
             cat <<'EOF'
 
-          One or more event files added by this PR have filenames that
-          do not match YYYY-MM-DD-slug.md.
+          One or more event files added in this change have filenames
+          that do not match YYYY-MM-DD-slug.md.
 
           This is usually a Pages CMS artifact: events created with
           empty title or date fields end up with filenames like '-.md'
-          because Pages CMS evaluates the filename template once at
-          create time and never re-evaluates it.
+          (or '--1.md', '--2.md', …) because Pages CMS evaluates the
+          filename template once at create time, before the editor
+          fills the form, and never re-evaluates it on update.
 
           To fix:
             1. In Pages CMS, DELETE the offending event.
