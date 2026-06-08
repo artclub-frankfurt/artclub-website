@@ -5,7 +5,7 @@ time: 5 - 7 PM
 subtitle: Exhibition Visit + Workshop
 lumaUrl: https://luma.com/u139ci7h
 registrationClosed: false
-coverImage: 2026-06-11-kunststiftung-dz-bank.jpeg
+coverImage: ./kunststiftung-dz-bank-flyer-kopie.jpeg
 coverImageAlt: Flyer for Event on June 11 at Kunststiftung DZ Bank with guided
   tour through Exhibition and a Workshop
 coverImageCredit: "Elizabeth Diller und Ricardo Scofidio, *Blur Building*, 2002
