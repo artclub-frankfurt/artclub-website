@@ -8,8 +8,8 @@ registrationClosed: false
 coverImage: kunststiftung-dz-bank-flyer-kopie.jpeg
 coverImageAlt: Flyer for Event on June 11 at Kunststiftung DZ Bank with guided
   tour through Exhibition and a Workshop
-coverImageCredit: "Elizabeth Diller und Ricardo Scofidio, *Blur Building*, 2002
-  | Photo credit: Beat Widmer"
+coverImageCredit: "Elizabeth Diller und Ricardo Scofidio, *Blur Building*, 2002.
+  Photo credit: Beat Widmer"
 instagramPosts:
   - https://www.instagram.com/p/DZT_jWTiC9c/?igsh=MTZ0bHE2MGhpN3l3cQ==
 ---
