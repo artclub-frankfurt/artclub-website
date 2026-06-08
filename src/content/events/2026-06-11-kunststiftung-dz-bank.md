@@ -15,13 +15,18 @@ instagramPosts:
 ---
 On Thursday, June 11, we will visit the exhibition hall of the Kunststiftung DZ Bank. A guided tour of the exhibition “How Do We Want to Live?” will begin at 5.00 PM. The program will then continue with an on-site workshop, where you can get creative and explore the exhibition’s themes in greater depth.
 
-Participation in both the guided tour and the workshop is free for everyone. As places are limited, registration via Luma is required. 
-
 We look forward to spending the evening with you and to engaging conversations about art, society, and the question: How do we want to live?
 
 
 
-**Meeting point:**  
+### Registration
+
+Participation in both the guided tour and the workshop is free for everyone. As places are limited, registration via Luma is required. 
+
+
+
+### Meeting point
+
 KUNSTSTIFTUNG DZ Bank  
 Exhibition Hall  
 Platz der Republik  
