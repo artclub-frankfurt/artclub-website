@@ -1,7 +1,7 @@
 ---
 title: Kunststiftung DZ Bank
 date: 2026-06-11
-time: 5 - 7 PM
+time: 5 – 7 PM
 subtitle: Exhibition Visit + Workshop
 lumaUrl: https://luma.com/u139ci7h
 registrationClosed: false
