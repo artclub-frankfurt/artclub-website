@@ -13,7 +13,7 @@ coverImageCredit: "Elizabeth Diller und Ricardo Scofidio, Blur Building, 2002.
 instagramPosts:
   - https://www.instagram.com/p/DZT_jWTiC9c/?igsh=MTZ0bHE2MGhpN3l3cQ==
 ---
-On Thursday, June 11, we will visit the exhibition hall of the Kunststiftung DZ Bank. A guided tour of the exhibition “How Do We Want to Live?” will begin at 5.00 PM. The program will then continue with an on-site workshop, where you can get creative and explore the exhibition’s themes in greater depth.
+On Thursday, June 11, we will visit the exhibition hall of the Kunststiftung DZ Bank. A guided tour of the exhibition *“How Do We Want to Live?”* will begin at 5.00 PM. The program will then continue with an on-site workshop, where you can get creative and explore the exhibition’s themes in greater depth.
 
 We look forward to spending the evening with you and to engaging conversations about art, society, and the question: How do we want to live?
 
