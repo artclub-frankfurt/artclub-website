@@ -5,7 +5,7 @@ time: 5 – 7 PM
 subtitle: Exhibition Visit + Workshop
 lumaUrl: https://luma.com/u139ci7h
 registrationClosed: false
-coverImage: ./kunststiftung-dz-bank-flyer-fur-webseite-and-luma.jpeg
+coverImage: kunststiftung-dz-bank-flyer-fur-webseite-and-luma.jpeg
 coverImageAlt: Flyer for Event on June 11 at Kunststiftung DZ Bank with guided
   tour through Exhibition and a Workshop
 instagramPosts:
@@ -25,7 +25,7 @@ Participation in both the guided tour and the workshop is free for everyone. As 
 
 ## Meeting point
 
-KUNSTSTIFTUNG DZ Bank  
+Kunststiftung DZ Bank  
 Exhibition Hall  
 Platz der Republik  
 Entrance: Cityhaus 1  
