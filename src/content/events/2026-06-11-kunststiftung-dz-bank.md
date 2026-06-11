@@ -5,11 +5,9 @@ time: 5 – 7 PM
 subtitle: Exhibition Visit + Workshop
 lumaUrl: https://luma.com/u139ci7h
 registrationClosed: false
-coverImage: ./kunststiftung-dz-bank-flyer.jpeg
+coverImage: kunststiftung-dz-bank-flyer.jpeg
 coverImageAlt: Flyer for Event on June 11 at Kunststiftung DZ Bank with guided
   tour through Exhibition and a Workshop
-coverImageCredit: "Elizabeth Diller und Ricardo Scofidio, Blur Building, 2002.
-  Photo credit: Beat Widmer"
 instagramPosts:
   - https://www.instagram.com/p/DZT_jWTiC9c/?igsh=MTZ0bHE2MGhpN3l3cQ==
 ---
