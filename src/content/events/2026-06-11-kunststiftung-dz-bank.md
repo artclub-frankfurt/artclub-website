@@ -5,11 +5,11 @@ time: 5 – 7 PM
 subtitle: Exhibition Visit + Workshop
 lumaUrl: https://luma.com/u139ci7h
 registrationClosed: false
-coverImage: kunststiftung-dz-bank-flyer.jpeg
+coverImage: ./kunststiftung-dz-bank-flyer-fur-webseite-and-luma.jpeg
 coverImageAlt: Flyer for Event on June 11 at Kunststiftung DZ Bank with guided
   tour through Exhibition and a Workshop
 instagramPosts:
-  - https://www.instagram.com/p/DZT_jWTiC9c/?igsh=MTZ0bHE2MGhpN3l3cQ==
+  - https://www.instagram.com/p/DZaapZxuBxa/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
 ---
 On Thursday, June 11, we will visit the exhibition hall of the Kunststiftung DZ Bank. A guided tour of the exhibition *“How Do We Want to Live?”* will begin at 5.00 PM. The program will then continue with an on-site workshop, where you can get creative and explore the exhibition’s themes in greater depth.
 
