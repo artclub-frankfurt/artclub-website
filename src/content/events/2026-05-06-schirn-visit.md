@@ -5,11 +5,9 @@ time: 5.30 PM
 subtitle: Solo Exhibition Thomas Bayrle
 lumaUrl: https://luma.com/nk0ec7lx
 registrationClosed: false
-coverImage: 2026-05-06-schirn-visit.jpg
-coverImageAlt: A tessellated portrait of Kim Kardashian rendered in red and
-  black on a white background, composed of small repeating undulating shapes
-  that resolve into a face when viewed at a distance.
-coverImageCredit: "Thomas Bayrle, Kim Kardashian XII, 2021. Photo credit: Wolfgang Günzel"
+coverImage: ./schirn-visit-65-4.png
+coverImageAlt: "Art Club Event Flyer for Visit at Schirn Kunsthalle Frankfurt
+  for Exhibition of Thomas Bayrle "
 instagramPosts:
   - https://www.instagram.com/p/DXpq-0ViJR7/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
   - https://www.instagram.com/p/DYfMWQdCJ4w/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
