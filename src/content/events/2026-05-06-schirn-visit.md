@@ -4,8 +4,8 @@ date: 2026-05-06
 time: 5.30 PM
 subtitle: Solo Exhibition Thomas Bayrle
 lumaUrl: https://luma.com/nk0ec7lx
-registrationClosed: false
-coverImage: ./schirn-visit-65-4.png
+registrationClosed: true
+coverImage: schirn-visit-65-4.png
 coverImageAlt: "Art Club Event Flyer for Visit at Schirn Kunsthalle Frankfurt
   for Exhibition of Thomas Bayrle "
 instagramPosts:
