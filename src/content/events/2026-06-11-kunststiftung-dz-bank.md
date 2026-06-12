@@ -4,7 +4,7 @@ date: 2026-06-11
 time: 5 – 7 PM
 subtitle: Exhibition Visit + Workshop
 lumaUrl: https://luma.com/u139ci7h
-registrationClosed: false
+registrationClosed: true
 coverImage: kunststiftung-dz-bank-flyer-fur-webseite-and-luma.jpeg
 coverImageAlt: Flyer for Event on June 11 at Kunststiftung DZ Bank with guided
   tour through Exhibition and a Workshop
