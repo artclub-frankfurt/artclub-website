@@ -17,6 +17,15 @@ Join us as we visit different galleries around Fahrgasse, where the gallerists w
 
 The meeting point is Fischerplätzchen, 60311 Frankfurt, at 4 PM. The tour will last until 6 PM.
 
+
+
+Our stops: 
+
+1. Galerie Maurer
+2. Galerie Greulich
+3. Galerie Anita Beckers
+4. Galerie Hanna Becker vom Rath
+
 ## Registration
 
 Registration for the event is available via the members’ chat or by sending us a DM on Instagram.
