@@ -1,0 +1,159 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection, getEntry } from 'astro:content';
+import { sortTeam, initials } from '../lib/team';
+
+const members = sortTeam(await getCollection('team'));
+
+const about = await getEntry('site', 'about');
+const heading = about?.data.teamHeading ?? 'The committee';
+const blurb =
+  about?.data.teamBlurb ??
+  'Art Club Frankfurt is run by students, for students. Meet the committee behind the gallery visits, talks, and member nights.';
+---
+{members.length > 0 && (
+  <section class="team">
+    <div class="team__head">
+      <h2 class="team__title">{heading}</h2>
+      <p class="team__blurb">{blurb}</p>
+    </div>
+    <ul class="team__grid" role="list">
+      {members.map((m) => (
+        <li class="team-card">
+          <div class="team-card__photo">
+            {m.data.photo ? (
+              <Image
+                src={m.data.photo}
+                alt={m.data.photoAlt ?? `Portrait of ${m.data.name}`}
+                widths={[140, 280]}
+                sizes="140px"
+                formats={['avif', 'webp']}
+                quality={82}
+                class="team-card__img"
+              />
+            ) : (
+              <span class="team-card__monogram" aria-hidden="true">{initials(m.data.name)}</span>
+            )}
+          </div>
+          <p class="team-card__name">{m.data.name}</p>
+          <p class="team-card__role">{m.data.role}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}
+
+<style>
+  .team {
+    max-width: 940px;
+    margin: 0 auto;
+    padding: 0 1.5rem 5rem;
+  }
+
+  .team__head {
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto 3.5rem;
+  }
+
+  .team__title {
+    font-family: var(--font-serif);
+    font-size: 1.75rem;
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--color-ink);
+    margin: 0 0 1rem;
+    text-wrap: balance;
+  }
+
+  .team__blurb {
+    font-family: var(--font-serif);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--color-ink-2);
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  .team__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.75rem 2rem;
+  }
+
+  @media (min-width: 720px) {
+    .team__grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .team-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .team-card__photo {
+    width: 132px;
+    height: 132px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 1.15rem;
+    background: var(--color-canvas-warm);
+    display: grid;
+    place-items: center;
+    /* Neutral resting state so the hover glow transitions smoothly */
+    box-shadow: 0 0 0 0 rgba(105, 0, 0, 0);
+    transition: box-shadow 280ms ease;
+  }
+
+  .team-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .team-card__monogram {
+    font-family: var(--font-serif);
+    font-size: 2.25rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: var(--color-ink-2);
+  }
+
+  .team-card__name {
+    font-family: var(--font-serif);
+    font-size: 1.1875rem;
+    font-weight: 400;
+    line-height: 1.25;
+    color: var(--color-ink);
+    margin: 0 0 0.4rem;
+  }
+
+  .team-card__role {
+    font-family: var(--font-sans);
+    font-size: var(--text-eyebrow);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--color-ink-3);
+    margin: 0;
+  }
+
+  /* Discreet burgundy glow — the one shadow the site allows. Tunable (see plan §Task 3 Step 3). */
+  .team-card:hover .team-card__photo {
+    box-shadow: 0 0 0 1px rgba(105, 0, 0, 0.18), 0 0 22px 2px rgba(105, 0, 0, 0.16);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .team-card__photo { transition: none; }
+  }
+
+  @media (max-width: 640px) {
+    .team-card__photo { width: 112px; height: 112px; }
+    .team__grid { gap: 2.25rem 1.25rem; }
+  }
+</style>
