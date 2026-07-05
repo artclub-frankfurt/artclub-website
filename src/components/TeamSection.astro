@@ -1,15 +1,21 @@
 ---
 import { Image } from 'astro:assets';
-import { getCollection, getEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 import { sortTeam, initials } from '../lib/team';
 
-const members = sortTeam(await getCollection('team'));
+interface Props {
+  heading?: string;
+  blurb?: string;
+}
 
-const about = await getEntry('site', 'about');
-const heading = about?.data.teamHeading ?? 'The committee';
-const blurb =
-  about?.data.teamBlurb ??
-  'Art Club Frankfurt is run by students, for students. Meet the committee behind the gallery visits, talks, and member nights.';
+// Copy is owned by the About page (passed as props) so this component stays a
+// generic "render the team" unit and the entry is fetched once, by the page.
+const {
+  heading = 'The committee',
+  blurb = 'Art Club Frankfurt is run by students, for students. Meet the committee behind the gallery visits, talks, and member nights.',
+} = Astro.props;
+
+const members = sortTeam(await getCollection('team'));
 ---
 {members.length > 0 && (
   <section class="team">
@@ -36,7 +42,7 @@ const blurb =
             )}
           </div>
           <p class="team-card__name">{m.data.name}</p>
-          <p class="team-card__role">{m.data.role}</p>
+          <p class="eyebrow team-card__role">{m.data.role}</p>
         </li>
       ))}
     </ul>
@@ -105,7 +111,7 @@ const blurb =
     display: grid;
     place-items: center;
     /* Neutral resting state so the hover glow transitions smoothly */
-    box-shadow: 0 0 0 0 rgba(105, 0, 0, 0);
+    box-shadow: 0 0 0 0 transparent;
     transition: box-shadow 280ms ease;
   }
 
@@ -133,19 +139,18 @@ const blurb =
     margin: 0 0 0.4rem;
   }
 
+  /* Composes the shared .eyebrow label; only the weight/margin differ. */
   .team-card__role {
-    font-family: var(--font-sans);
-    font-size: var(--text-eyebrow);
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-eyebrow);
-    color: var(--color-ink-3);
     margin: 0;
   }
 
-  /* Discreet burgundy glow — the one shadow the site allows. Tunable (see plan §Task 3 Step 3). */
+  /* Discreet burgundy glow — the one shadow the site allows. Linked to the
+     --color-burgundy token via color-mix; the percentages are the tunable knob. */
   .team-card:hover .team-card__photo {
-    box-shadow: 0 0 0 1px rgba(105, 0, 0, 0.18), 0 0 22px 2px rgba(105, 0, 0, 0.16);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--color-burgundy) 18%, transparent),
+      0 0 22px 2px color-mix(in srgb, var(--color-burgundy) 16%, transparent);
   }
 
   @media (prefers-reduced-motion: reduce) {
