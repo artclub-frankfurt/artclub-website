@@ -17,13 +17,28 @@ const events = defineCollection({
   }),
 });
 
+const team = defineCollection({
+  loader: glob({ pattern: ['**/*.md', '!**/_*.md'], base: './src/content/team' }),
+  schema: ({ image }) => z.object({
+    name: z.string(),
+    role: z.string(),
+    // Required, sole sort key. z.coerce.number() so it parses whether Pages
+    // CMS writes `order: 1` or `order: "1"` (mirrors z.coerce.date() below).
+    order: z.coerce.number(),
+    photo: image().optional(),
+    photoAlt: z.string().optional(),
+  }),
+});
+
 const site = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/site' }),
   schema: z.object({
     title: z.string().optional(),
     heroTitle: z.string().optional(),
     heroSubtitle: z.string().optional(),
+    teamHeading: z.string().optional(),
+    teamBlurb: z.string().optional(),
   }),
 });
 
-export const collections = { events, site };
+export const collections = { events, site, team };
