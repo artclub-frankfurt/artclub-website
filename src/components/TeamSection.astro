@@ -1,0 +1,185 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import { sortTeam, initials } from '../lib/team';
+
+interface Props {
+  heading?: string;
+  blurb?: string;
+}
+
+// Copy is owned by the About page (passed as props) so this component stays a
+// generic "render the team" unit and the entry is fetched once, by the page.
+const {
+  heading = 'The committee',
+  blurb = 'Art Club Frankfurt is run by students, for students. Meet the committee behind the gallery visits, talks, and member nights.',
+} = Astro.props;
+
+const members = sortTeam(await getCollection('team'));
+---
+{members.length > 0 && (
+  <section class="team">
+    <div class="team__head">
+      <h2 class="team__title">{heading}</h2>
+      <p class="team__blurb">{blurb}</p>
+    </div>
+    <ul class="team__grid" role="list">
+      {members.map((m) => (
+        <li class="team-card">
+          <div class="team-card__photo">
+            {m.data.photo ? (
+              <Image
+                src={m.data.photo}
+                alt={m.data.photoAlt ?? `Portrait of ${m.data.name}`}
+                widths={[190, 380]}
+                sizes="190px"
+                formats={['avif', 'webp']}
+                quality={82}
+                class="team-card__img"
+              />
+            ) : (
+              <span class="team-card__monogram" aria-hidden="true">{initials(m.data.name)}</span>
+            )}
+          </div>
+          <p class="team-card__name">{m.data.name}</p>
+          <p class="eyebrow team-card__role">{m.data.role}</p>
+          {m.data.email && (
+            <a class="team-card__email" href={`mailto:${m.data.email}`}>{m.data.email}</a>
+          )}
+        </li>
+      ))}
+    </ul>
+  </section>
+)}
+
+<style>
+  .team {
+    max-width: 940px;
+    margin: 0 auto;
+    padding: 0 1.5rem 5rem;
+  }
+
+  .team__head {
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto 3.5rem;
+  }
+
+  .team__title {
+    font-family: var(--font-serif);
+    font-size: 1.75rem;
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--color-ink);
+    margin: 0 0 1rem;
+    text-wrap: balance;
+  }
+
+  .team__blurb {
+    font-family: var(--font-serif);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--color-ink-2);
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  /* Centered wrap so any number of members balances (2 today, more later). */
+  .team__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 3rem 2.5rem;
+  }
+
+  .team-card {
+    --avatar-size: 190px;
+    flex: 0 0 auto;
+    width: calc(var(--avatar-size) + 20px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  /* Photo shown exactly as uploaded (natural aspect, no crop) — rounding comes
+     from the uploaded transparent-cornered image. Grayscale at rest, full
+     colour on hover. */
+  .team-card__photo {
+    width: var(--avatar-size);
+    margin-bottom: 1.25rem;
+  }
+
+  .team-card__img {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: grayscale(100%);
+    transition: filter 450ms ease;
+  }
+  .team-card:hover .team-card__img {
+    filter: grayscale(0%);
+  }
+
+  /* Monogram fallback (members without a photo) — a warm circular disc. */
+  .team-card__monogram {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--color-canvas-warm);
+    font-family: var(--font-serif);
+    font-size: calc(var(--avatar-size) * 0.28);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: var(--color-ink-2);
+  }
+
+  .team-card__name {
+    font-family: var(--font-serif);
+    font-size: 1.1875rem;
+    font-weight: 400;
+    line-height: 1.25;
+    color: var(--color-ink);
+    margin: 0 0 0.4rem;
+  }
+
+  /* Composes the shared .eyebrow label; only the weight/margin differ. */
+  .team-card__role {
+    font-weight: 600;
+    margin: 0;
+  }
+
+  /* Email written out — a clickable mailto per member so visitors reach the
+     right person rather than a generic inbox. */
+  .team-card__email {
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: var(--color-burgundy);
+    margin-top: 0.55rem;
+    overflow-wrap: anywhere;
+    transition: color 150ms ease;
+  }
+  .team-card__email:hover {
+    color: var(--color-burgundy-deep);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .team-card__img {
+      transition: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .team-card { --avatar-size: 150px; }
+    .team__grid { gap: 2.5rem 1.5rem; }
+  }
+</style>

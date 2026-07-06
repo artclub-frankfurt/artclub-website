@@ -38,6 +38,11 @@ media:
     input: public/images
     output: /images
     rename: safe
+  - name: team_media
+    label: Team photos
+    input: src/content/team
+    output: "."
+    rename: safe
 
 content:
   # ─────────────────────────────────────────────────────────────────────
@@ -148,6 +153,69 @@ content:
         description: "Optional. The event's full description. Use the toolbar for bold, italic, headings, lists, links."
 
   # ─────────────────────────────────────────────────────────────────────
+  # Team — the committee roster shown on the About page.
+  # ─────────────────────────────────────────────────────────────────────
+  - name: team
+    label: Team
+    type: collection
+    path: src/content/team
+    # Plain {fields.name}, auto-slugified by Pages CMS → e.g. lena-hofmann.md.
+    # No pipe/filter syntax (that caused the historical '-.md' collapse).
+    filename: "{fields.name}.md"
+    view:
+      fields: [order, name, role]
+      primary: name
+      sort: [order, name]
+      default:
+        sort: order
+        order: asc
+    fields:
+      - name: name
+        label: Name
+        type: string
+        required: true
+
+      - name: role
+        label: Role / title
+        type: string
+        required: true
+        description: "e.g. 'President', 'Events Lead', 'Treasurer'."
+
+      - name: email
+        label: Email
+        type: string
+        required: false
+        description: "Optional. This member's own email — written out on their card so visitors contact the right person, not a generic inbox. Leave blank to hide."
+        pattern:
+          regex: "^([^@\\s]+@[^@\\s]+\\.[^@\\s]+)?$"
+          message: "Must be a valid email address (name@domain.tld) or empty."
+
+      - name: order
+        label: Order
+        type: number
+        required: true
+        # Only min/max are documented number options; do NOT add unconfirmed
+        # keys (invalid config keys have broken this CMS before).
+        options:
+          min: 1
+        description: "Position in the grid — 1 shows first. Change these numbers to reorder members."
+
+      - name: photo
+        label: Photo
+        type: image
+        required: false
+        description: "Optional. Shown exactly as you upload it — no cropping or resizing on our side. Upload it already cropped the way you want it to appear (a round or square image sits best next to the others). Leave blank to show the member's initials instead."
+        options:
+          path: src/content/team
+          extensions: [jpg, jpeg, png, webp]
+
+      - name: photoAlt
+        label: Photo — alt text
+        type: string
+        required: false
+        description: "Optional. One sentence describing the photo (read by screen readers). Defaults to 'Portrait of {name}'."
+
+  # ─────────────────────────────────────────────────────────────────────
   # Site pages — three named markdown files. Lower frequency edits.
   # ─────────────────────────────────────────────────────────────────────
   - name: home_page
@@ -191,6 +259,16 @@ content:
         type: rich-text
         required: false
         description: "The page content. Headings + paragraphs render with the editorial type system."
+      - name: teamHeading
+        label: Team section — heading
+        type: string
+        required: false
+        description: "Optional. Heading above the team grid. Defaults to 'The committee'."
+      - name: teamBlurb
+        label: Team section — blurb
+        type: string
+        required: false
+        description: "Optional. One or two sentences introducing the team, shown below the heading."
 
   - name: contact_page
     label: Contact page
