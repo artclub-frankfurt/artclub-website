@@ -31,8 +31,8 @@ const members = sortTeam(await getCollection('team'));
               <Image
                 src={m.data.photo}
                 alt={m.data.photoAlt ?? `Portrait of ${m.data.name}`}
-                widths={[140, 280]}
-                sizes="140px"
+                widths={[190, 380]}
+                sizes="190px"
                 formats={['avif', 'webp']}
                 quality={82}
                 class="team-card__img"
@@ -43,6 +43,9 @@ const members = sortTeam(await getCollection('team'));
           </div>
           <p class="team-card__name">{m.data.name}</p>
           <p class="eyebrow team-card__role">{m.data.role}</p>
+          {m.data.email && (
+            <a class="team-card__email" href={`mailto:${m.data.email}`}>{m.data.email}</a>
+          )}
         </li>
       ))}
     </ul>
@@ -81,50 +84,57 @@ const members = sortTeam(await getCollection('team'));
     text-wrap: pretty;
   }
 
+  /* Centered wrap so any number of members balances (2 today, more later). */
   .team__grid {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2.75rem 2rem;
-  }
-
-  @media (min-width: 720px) {
-    .team__grid { grid-template-columns: repeat(3, 1fr); }
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 3rem 2.5rem;
   }
 
   .team-card {
+    --avatar-size: 190px;
+    flex: 0 0 auto;
+    width: calc(var(--avatar-size) + 20px);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
   }
 
+  /* Photo shown exactly as uploaded (natural aspect, no crop) — rounding comes
+     from the uploaded transparent-cornered image. Grayscale at rest, full
+     colour on hover. */
   .team-card__photo {
-    width: 132px;
-    height: 132px;
-    border-radius: 50%;
-    overflow: hidden;
-    margin-bottom: 1.15rem;
-    background: var(--color-canvas-warm);
-    display: grid;
-    place-items: center;
-    /* Neutral resting state so the hover glow transitions smoothly */
-    box-shadow: 0 0 0 0 transparent;
-    transition: box-shadow 280ms ease;
+    width: var(--avatar-size);
+    margin-bottom: 1.25rem;
   }
 
   .team-card__img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
     display: block;
+    width: 100%;
+    height: auto;
+    filter: grayscale(100%);
+    transition: filter 450ms ease;
+  }
+  .team-card:hover .team-card__img {
+    filter: grayscale(0%);
   }
 
+  /* Monogram fallback (members without a photo) — a warm circular disc. */
   .team-card__monogram {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--color-canvas-warm);
     font-family: var(--font-serif);
-    font-size: 2.25rem;
+    font-size: calc(var(--avatar-size) * 0.28);
     font-weight: 400;
     letter-spacing: 0.02em;
     color: var(--color-ink-2);
@@ -145,20 +155,31 @@ const members = sortTeam(await getCollection('team'));
     margin: 0;
   }
 
-  /* Discreet burgundy glow — the one shadow the site allows. Linked to the
-     --color-burgundy token via color-mix; the percentages are the tunable knob. */
-  .team-card:hover .team-card__photo {
-    box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--color-burgundy) 18%, transparent),
-      0 0 22px 2px color-mix(in srgb, var(--color-burgundy) 16%, transparent);
+  /* Email written out (Tsering's call) — a clickable mailto per member so
+     visitors reach the right person, not a generic inbox. */
+  .team-card__email {
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: var(--color-burgundy);
+    margin-top: 0.55rem;
+    overflow-wrap: anywhere;
+    transition: color 150ms ease;
+  }
+  .team-card__email:hover {
+    color: var(--color-burgundy-deep);
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .team-card__photo { transition: none; }
+    .team-card__img {
+      transition: none;
+    }
   }
 
   @media (max-width: 640px) {
-    .team-card__photo { width: 112px; height: 112px; }
-    .team__grid { gap: 2.25rem 1.25rem; }
+    .team-card { --avatar-size: 150px; }
+    .team__grid { gap: 2.5rem 1.5rem; }
   }
 </style>

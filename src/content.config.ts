@@ -22,6 +22,7 @@ const team = defineCollection({
   schema: ({ image }) => z.object({
     name: z.string(),
     role: z.string(),
+    email: z.string().email().optional(),
     // Required, sole sort key. z.coerce.number() so it parses whether Pages
     // CMS writes `order: 1` or `order: "1"` (mirrors z.coerce.date() above).
     order: z.coerce.number(),

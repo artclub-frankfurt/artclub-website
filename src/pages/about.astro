@@ -10,7 +10,7 @@ const { Content } = await render(about);
 
 const description = 'Art Club Frankfurt — student initiative at Goethe University. Read about our mission, the team, and what we do.';
 ---
-<BaseLayout title="About" description={description}>
+<BaseLayout title={about.data.title ?? 'About'} description={description}>
   <article class="about-page">
     <header class="about-page__header">
       <p class="eyebrow about-page__eyebrow">Student Initiative · Goethe University</p>

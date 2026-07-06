@@ -181,6 +181,15 @@ content:
         required: true
         description: "e.g. 'President', 'Events Lead', 'Treasurer'."
 
+      - name: email
+        label: Email
+        type: string
+        required: false
+        description: "Optional. This member's own email — written out on their card so visitors contact the right person, not a generic inbox. Leave blank to hide."
+        pattern:
+          regex: "^([^@\\s]+@[^@\\s]+\\.[^@\\s]+)?$"
+          message: "Must be a valid email address (name@domain.tld) or empty."
+
       - name: order
         label: Order
         type: number
@@ -195,7 +204,7 @@ content:
         label: Photo
         type: image
         required: false
-        description: "Optional. A headshot (square images look best — it's shown as a circle). Leave blank to show the member's initials instead."
+        description: "Optional. Shown exactly as you upload it — no cropping or resizing on our side. Upload it already cropped the way you want it to appear (a round or square image sits best next to the others). Leave blank to show the member's initials instead."
         options:
           path: src/content/team
           extensions: [jpg, jpeg, png, webp]
