@@ -99,7 +99,12 @@ const members = sortTeam(await getCollection('team'));
   .team-card {
     --avatar-size: 190px;
     flex: 0 0 auto;
-    width: calc(var(--avatar-size) + 20px);
+    /* Grow to fit the widest child — normally the email — so the address never
+       has to wrap. min keeps a sensible floor (the avatar); max caps how wide
+       an unusually long address can push the card. */
+    width: max-content;
+    min-width: var(--avatar-size);
+    max-width: 320px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -163,7 +168,13 @@ const members = sortTeam(await getCollection('team'));
     line-height: 1.4;
     color: var(--color-burgundy);
     margin-top: 0.55rem;
-    overflow-wrap: anywhere;
+    /* Always a single line for reasonable addresses (the card grows to fit).
+       Only an address longer than the card's max-width truncates with an
+       ellipsis instead of wrapping — the mailto link still works in full. */
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     transition: color 150ms ease;
   }
   .team-card__email:hover {
