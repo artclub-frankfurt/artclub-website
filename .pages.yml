@@ -118,9 +118,10 @@ content:
         required: false
         description: "Optional. Drag-drop the event poster here. Goes alongside the .md."
         options:
-          # `path` = the folder Pages CMS opens when browsing existing images.
-          # The actual upload destination is determined by the events_media
-          # entry at the top of this file.
+          # `media` binds uploads to events_media (→ src/content/events); set it
+          # explicitly so this never depends on media-entry ordering. `path`
+          # only sets the folder the media browser opens in.
+          media: events_media
           path: src/content/events
           extensions: [jpg, jpeg, png, webp]
 
@@ -206,6 +207,12 @@ content:
         required: false
         description: "Optional. Shown exactly as you upload it — no cropping or resizing on our side. Upload it already cropped the way you want it to appear (a round or square image sits best next to the others). Leave blank to show the member's initials instead."
         options:
+          # `media` binds uploads to the team_media entry (→ src/content/team).
+          # WITHOUT it, Pages CMS falls back to the FIRST media entry
+          # (events_media) and drops team photos into src/content/events —
+          # the misfiling that had to be cleaned up manually in PR #51.
+          # `path` only sets the folder the media browser opens in.
+          media: team_media
           path: src/content/team
           extensions: [jpg, jpeg, png, webp]
 
