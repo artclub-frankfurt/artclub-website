@@ -1,6 +1,6 @@
 ---
 title: About
-teamHeading: Meet the committee
+teamHeading: "Meet the committee "
 ---
 The Art Club Frankfurt is a student initiative at Goethe University Frankfurt that brings together students with a shared interest in art.
 
