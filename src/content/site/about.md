@@ -1,7 +1,7 @@
 ---
 title: About
 teamHeading: "Meet the committee "
-teamBlurb: "-"
+teamBlurb: Art Club Frankfurt is run by students, for students.
 ---
 The Art Club Frankfurt is a student initiative at Goethe University Frankfurt that brings together students with a shared interest in art.
 
