@@ -10,6 +10,7 @@ coverImageAlt: Flyer for Event on June 11 at Kunststiftung DZ Bank with guided
   tour through Exhibition and a Workshop
 instagramPosts:
   - https://www.instagram.com/p/DZaapZxuBxa/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==
+  - https://www.instagram.com/p/DZsUBjRiJZd/?igsh=MWFxam5qbWJ6ZDJwbA==
 ---
 On Thursday, June 11, we will visit the exhibition hall of the Kunststiftung DZ Bank. A guided tour of the exhibition *“How Do We Want to Live?”* will begin at 5.00 PM. The program will then continue with an on-site workshop, where you can get creative and explore the exhibition’s themes in greater depth.
 
